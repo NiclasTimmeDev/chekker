@@ -30,6 +30,9 @@ class CreateProcessesTable extends Migration
 
             // The recurrence pattern of the process.
             $table->string('recurrence_pattern');
+
+            // The category of the process
+            $table->unsignedBigInteger('category_id');
         });
     }
 

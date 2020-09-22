@@ -80,7 +80,7 @@ export default {
 
 <style lang="scss" scoped>
 .sidebar {
-  width: 3 0vw;
+  width: 30vw;
   height: 100vh;
   position: fixed;
   overflow: scroll;
