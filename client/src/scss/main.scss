@@ -1,0 +1,17 @@
+// Fonts.
+@import "./fonts";
+
+// Base variables for the theme.
+@import "./variables.scss";
+
+// Mixins.
+@import "./mixins";
+
+// Components.
+@import "./components/_headers.scss";
+@import "./components/_navigation.scss";
+@import "./components/_cards.scss";
+
+@import "./../../node_modules/bootstrap/scss/bootstrap";
+@import "./../../node_modules/bootstrap/scss/variables";
+@import "./../../node_modules/bootstrap/scss/mixins";
