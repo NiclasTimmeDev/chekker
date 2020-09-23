@@ -25,7 +25,7 @@ class CreateTasksTable extends Migration
             $table->unsignedBigInteger('template_id')->nullable();
 
             // The person that's involed. May be 3rd party.
-            $table->unsignedBigInteger('involved_person');
+            $table->unsignedBigInteger('involved_person')->nullable();
 
             // Default timestamps.
             $table->timestamps();

@@ -21,7 +21,7 @@ class CreateTagsTable extends Migration
             $table->string('title');
 
             // The team it belongs to.
-            $table->unsignedBigInteger('team_id');
+            $table->unsignedBigInteger('team_id')->nullable();
 
             // The hex color code for the tag.
             $table->string('color');
