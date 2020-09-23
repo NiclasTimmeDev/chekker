@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 
 class ProcessesController extends Controller
 {
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        // Apply middlware.
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
