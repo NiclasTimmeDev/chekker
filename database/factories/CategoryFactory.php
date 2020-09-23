@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\tasks;
+use App\Category;
 use Faker\Generator as Faker;
 
-$factory->define(tasks::class, function (Faker $faker) {
+$factory->define(Category::class, function (Faker $faker) {
     return [
         //
     ];

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\tasks;
+use App\Process;
 use Illuminate\Http\Request;
 
-class TasksController extends Controller
+class ProcessController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class TasksController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\tasks  $tasks
+     * @param  \App\Process  $process
      * @return \Illuminate\Http\Response
      */
-    public function show(tasks $tasks)
+    public function show(Process $process)
     {
         //
     }
@@ -52,10 +52,10 @@ class TasksController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\tasks  $tasks
+     * @param  \App\Process  $process
      * @return \Illuminate\Http\Response
      */
-    public function edit(tasks $tasks)
+    public function edit(Process $process)
     {
         //
     }
@@ -64,10 +64,10 @@ class TasksController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\tasks  $tasks
+     * @param  \App\Process  $process
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, tasks $tasks)
+    public function update(Request $request, Process $process)
     {
         //
     }
@@ -75,10 +75,10 @@ class TasksController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\tasks  $tasks
+     * @param  \App\Process  $process
      * @return \Illuminate\Http\Response
      */
-    public function destroy(tasks $tasks)
+    public function destroy(Process $process)
     {
         //
     }

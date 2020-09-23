@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Test;
+use App\Task;
 use Faker\Generator as Faker;
 
-$factory->define(Test::class, function (Faker $faker) {
+$factory->define(Task::class, function (Faker $faker) {
     return [
         //
     ];
