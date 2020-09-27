@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Team;
+use Throwable;
 use Illuminate\Http\Request;
 
 class TeamController extends Controller
@@ -35,7 +36,27 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required'
+        ]);
+
+        // Generate Acces code.
+        $acces_code = $this->generateAccessCode($request->name);
+        // $user = $request->user;
+
+        // Create random string 
+        $new_team = new Team([
+            'name' => $request->name,
+            'access_code' => $acces_code
+        ]);
+
+        try {
+            $new_team->save();
+            return $new_team;
+        } catch (Throwable $e) {
+            report($e);
+            return false;
+        }
     }
 
     /**
@@ -81,5 +102,22 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         //
+    }
+
+    private function generateAccessCode($string)
+    {
+        // Delete special characters etc.
+        $sanitized = filter_var($string, FILTER_SANITIZE_URL);
+
+        // Generate random string.
+        $randomString = '';
+        $allowed_characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $length = 6;
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $allowed_characters[rand(0, $length - 1)];
+        }
+
+        $acces_code = $sanitized . '-' . $randomString;
+        return $acces_code;
     }
 }
