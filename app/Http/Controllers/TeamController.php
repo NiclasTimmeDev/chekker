@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Process;
+use App\Team;
 use Illuminate\Http\Request;
 
-class ProcessController extends Controller
+class TeamController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +14,7 @@ class ProcessController extends Controller
      */
     public function index()
     {
-        return Process::all();
+        //
     }
 
     /**
@@ -46,10 +41,10 @@ class ProcessController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Process  $process
+     * @param  \App\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function show(Process $process)
+    public function show(Team $team)
     {
         //
     }
@@ -57,10 +52,10 @@ class ProcessController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Process  $process
+     * @param  \App\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function edit(Process $process)
+    public function edit(Team $team)
     {
         //
     }
@@ -69,10 +64,10 @@ class ProcessController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Process  $process
+     * @param  \App\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Process $process)
+    public function update(Request $request, Team $team)
     {
         //
     }
@@ -80,10 +75,10 @@ class ProcessController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Process  $process
+     * @param  \App\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Process $process)
+    public function destroy(Team $team)
     {
         //
     }

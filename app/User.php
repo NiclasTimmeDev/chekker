@@ -10,6 +10,12 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    // m:n relationship with teams.
+    public function teams()
+    {
+        return $this->belongsToMany('App\Team');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

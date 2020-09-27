@@ -19,4 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Procecces.
-Route::resource('processes', 'ProcessController');
+Route::resource('process', 'ProcessController');
+
+// Teams.
+Route::resource('team', 'TeamController');

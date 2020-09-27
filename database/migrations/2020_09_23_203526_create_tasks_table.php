@@ -34,7 +34,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
 
             // The description of the task.
-            $table->string('description');
+            $table->text('description');
         });
     }
 
