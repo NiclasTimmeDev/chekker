@@ -4,15 +4,17 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 import auth from "./auth/authStore";
+import team from "./team";
 
 export default new Vuex.Store({
-  state: {
-    count: 0
-  },
-  mutations: {},
-  actions: {},
-  getters: {},
-  modules: {
-    auth
-  }
+    state: {
+        count: 0
+    },
+    mutations: {},
+    actions: {},
+    getters: {},
+    modules: {
+        auth,
+        team
+    }
 });

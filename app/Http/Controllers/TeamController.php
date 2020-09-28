@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Team;
 use Throwable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TeamController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,20 +41,24 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
+        // Check if name is provided.
         $request->validate([
             'name' => 'required'
         ]);
 
         // Generate Acces code.
         $acces_code = $this->generateAccessCode($request->name);
-        // $user = $request->user;
 
-        // Create random string 
+        // Get user from middlware.
+        $user_id = Auth::id();
+
         $new_team = new Team([
             'name' => $request->name,
+            'user_id' => $user_id,
             'access_code' => $acces_code
         ]);
 
+        // Save user.
         try {
             $new_team->save();
             return $new_team;
@@ -104,6 +113,14 @@ class TeamController extends Controller
         //
     }
 
+    /**
+     * Generate access token for inviting other members.
+     * 
+     * @param string $string
+     *   The name of the team. Will be part of the access token.
+     * @return string $access_token
+     *   The access token.
+     */
     private function generateAccessCode($string)
     {
         // Delete special characters etc.

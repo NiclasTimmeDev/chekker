@@ -1,17 +1,18 @@
-// Fonts.
-@import "./fonts";
+// Mixins.
+@import "./../../node_modules/bootstrap/scss/mixins";
+@import "./mixins";
 
-// Base variables for the theme.
+// Base variables
 @import "./variables.scss";
 
-// Mixins.
-@import "./mixins";
+// Bootstrap.
+@import "./../../node_modules/bootstrap/scss/bootstrap";
+
+// Fonts.
+@import "./fonts";
 
 // Components.
 @import "./components/_headers.scss";
 @import "./components/_navigation.scss";
 @import "./components/_cards.scss";
-
-@import "./../../node_modules/bootstrap/scss/bootstrap";
-@import "./../../node_modules/bootstrap/scss/variables";
-@import "./../../node_modules/bootstrap/scss/mixins";
+@import "./components/_buttons.scss";
