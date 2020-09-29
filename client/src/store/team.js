@@ -6,7 +6,7 @@ export default {
     // ============================
     state: () => {
         return {
-            team: {},
+            teams: [],
             loading: false,
             errors: ""
         };
@@ -27,11 +27,11 @@ export default {
          * StoreTeam.
          *
          * @param {object} state
-         * @param {object} team
+         * @param {object} teams
          */
-        storeTeam(state, team) {
+        storeTeam(state, teams) {
             state.loading = false;
-            state.team = team;
+            state.teams = [...state.teams, teams];
         },
         /**
          * Store Team Error.
@@ -52,7 +52,7 @@ export default {
          * Create a team.
          *
          * @param {object} commit
-         * @param {object} team
+         * @param {object} teams
          */
         async createTeam({ commit, dispatch }, team) {
             commit("startLoading");
@@ -73,7 +73,29 @@ export default {
                 } else {
                     commit(
                         "storeTeamError",
-                        "Sorrz, etwas ist schief gelaufen."
+                        "Sorry, etwas ist schief gelaufen."
+                    );
+                }
+                return false;
+            }
+        },
+        async loadTeams({ commit }) {
+            // commit("startLoading");
+            try {
+                const res = await axios.get("/api/team");
+
+                console.log(res);
+            } catch (error) {
+                if (error.response.status === 401) {
+                    commit(
+                        "storeTeamError",
+                        "Sie haben nicht die passende Berechtigung."
+                    );
+                } else {
+                    console.log(error.response.data);
+                    commit(
+                        "storeTeamError",
+                        "Sorry, etwas ist schief gelaufen."
                     );
                 }
                 return false;

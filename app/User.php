@@ -13,7 +13,7 @@ class User extends Authenticatable
     // m:n relationship with teams.
     public function teams()
     {
-        return $this->belongsToMany('App\Team');
+        return $this->belongsToMany('App\Team')->withTimestamps();
     }
 
     /**

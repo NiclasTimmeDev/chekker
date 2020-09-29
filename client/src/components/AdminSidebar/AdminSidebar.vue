@@ -2,7 +2,7 @@
     <aside id="admin-sidebar" class="sidebar bg-darkest">
         <div class="sidebar-content p-3">
             <!-- HEADER -->
-            <h1>TEAM</h1>
+            <h1>Chekker.io</h1>
             <!-- ACTION BUTTON -->
             <button
                 class="btn btn-primary btn-block mx-auto"

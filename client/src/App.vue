@@ -22,10 +22,11 @@ export default {
         "app-admin-sidebar": AdminSidebar
     },
     methods: {
-        ...mapActions(["loadUser"])
+        ...mapActions(["loadUser", "loadTeams"])
     },
     mounted() {
         this.loadUser();
+        this.loadTeams();
     }
 };
 </script>

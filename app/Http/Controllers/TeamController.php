@@ -20,7 +20,11 @@ class TeamController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+
+        $teams = $user->teams;
+
+        return $teams;
     }
 
     /**
@@ -50,17 +54,18 @@ class TeamController extends Controller
         $acces_code = $this->generateAccessCode($request->name);
 
         // Get user from middlware.
-        $user_id = Auth::id();
+        $user = Auth::user();
 
         $new_team = new Team([
             'name' => $request->name,
-            'user_id' => $user_id,
+            'user_id' => $user->id,
             'access_code' => $acces_code
         ]);
 
         // Save user.
         try {
             $new_team->save();
+            $user->teams()->attach($new_team);
             return $new_team;
         } catch (Throwable $e) {
             report($e);
