@@ -11,6 +11,9 @@
                 <i class="fas fa-plus"></i> Neu
             </button>
 
+            <!-- SELECT TEAM -->
+            <admin-team-display></admin-team-display>
+
             <!-- MODAL -->
             <create-new-modal :showModal="showModal" :toggleModal="toggleModal">
                 <template v-slot:title>
@@ -94,6 +97,7 @@
 <script>
 import AdminControl from "./AdminControl.vue";
 import Modal from "./../UI/Modal";
+import AdminTeamDisplay from "./AdminTeamDisplay.vue";
 export default {
     data() {
         return {
@@ -102,7 +106,8 @@ export default {
     },
     components: {
         "admin-control": AdminControl,
-        "create-new-modal": Modal
+        "create-new-modal": Modal,
+        "admin-team-display": AdminTeamDisplay
     },
     methods: {
         toggleModal() {

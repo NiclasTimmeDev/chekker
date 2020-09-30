@@ -7,9 +7,7 @@ import auth from "./auth/authStore";
 import team from "./team";
 
 export default new Vuex.Store({
-    state: {
-        count: 0
-    },
+    state: {},
     mutations: {},
     actions: {},
     getters: {},

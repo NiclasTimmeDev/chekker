@@ -14,16 +14,20 @@ class TeamController extends Controller
         $this->middleware('auth');
     }
     /**
-     * Display a listing of the resource.
+     * Get all teams of the current user.
      *
      * @return \Illuminate\Http\Response
+     *   The teams of the user.
      */
     public function index()
     {
+        // Get current user.
         $user = Auth::user();
 
+        // Get the teams of the user.
         $teams = $user->teams;
 
+        // Return all teams.
         return $teams;
     }
 

@@ -1,4 +1,5 @@
 import axios from "axios";
+import localStorageService from "./../services/localStorageService";
 
 export default {
     // ============================
@@ -33,6 +34,10 @@ export default {
             state.loading = false;
             state.teams = [...state.teams, teams];
         },
+        loadAllTeams(state, teams) {
+            state.loading = false;
+            state.teams = teams;
+        },
         /**
          * Store Team Error.
          *
@@ -61,6 +66,7 @@ export default {
                 const res = await axios.post("/api/team", { name });
 
                 if (res.status === 201) {
+                    localStorageService.add("current_team", res.data.id, true);
                     commit("storeTeam", res.data);
                     return true;
                 }
@@ -84,7 +90,7 @@ export default {
             try {
                 const res = await axios.get("/api/team");
 
-                console.log(res);
+                commit("loadAllTeams", res.data);
             } catch (error) {
                 if (error.response.status === 401) {
                     commit(
@@ -111,8 +117,8 @@ export default {
          *
          * @param state
          */
-        getTeam: state => {
-            return state;
+        getTeams: state => {
+            return state.teams;
         }
     }
 };
