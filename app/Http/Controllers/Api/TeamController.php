@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Team;
 use Throwable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class TeamController extends Controller
 {
+    private $contentType = "json";
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -120,6 +124,54 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         //
+    }
+
+    /**
+     * Join a team by entering the access code.
+     * 
+     * @param \Illuminate\Http\Request  $request
+     *   The request object.
+     */
+    public function join(Request $request)
+    {
+        // Validate request.
+        $request->validate([
+            'code' => 'required'
+        ]);
+
+        try {
+            // Retrieve access code from req.
+            $access_code = $request->code;
+
+            if (!$access_code) {
+                return response()->json(["error" => "Bitte geben Sie einen Zugangscode ein"], 400);
+            }
+
+            // Get current user.
+            $user = Auth::user();
+
+            // Check if there is a team with the given access code.
+            $team = DB::table('teams')->where('access_code', $access_code)->get();
+
+            return $team->id;
+
+            // Return 404 if no team exists
+            if (!$team) {
+                return response()->json(
+                    [
+                        "error" => "Es konnte kein Team mit diesem Zugangscode gefunden werden."
+                    ],
+                    404
+                );
+            }
+
+            // Attach team to user.
+            $user->teams()->attach($team);
+            return $team;
+        } catch (Throwable $e) {
+            report($e);
+            return false;
+        }
     }
 
     /**

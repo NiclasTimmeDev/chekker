@@ -1,7 +1,7 @@
 <template>
     <!-- <h4>{{ currentName }}</h4> -->
     <select
-        class="custom-select mb-3"
+        class="custom-select custom-select-sm mb-4"
         v-model="currentTeamID"
         @change="setCurrentTeam"
     >
@@ -77,10 +77,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.custom-select {
-    /* background-color: transparent;
-    border: none;
-    color: white !important; */
-}
-</style>
+<style lang="scss" scoped></style>

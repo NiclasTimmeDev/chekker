@@ -5,6 +5,7 @@ import Login from "./../views/Login.vue";
 import Register from "./../views/Register.vue";
 import Dashboard from "./../views/Dashboard.vue";
 import CreateTeam from "./../views/Team/CreateTeam.vue";
+import JoinTeam from "./../views/Team/JoinTeam.vue";
 
 Vue.use(VueRouter);
 
@@ -34,6 +35,11 @@ const routes = [
         path: "/team/create",
         name: "CreateTeam",
         component: CreateTeam
+    },
+    {
+        path: "/team/join",
+        name: "JoinTeam",
+        component: JoinTeam
     }
 ];
 

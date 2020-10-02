@@ -22,4 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('process', 'ProcessController');
 
 // Teams.
-Route::resource('team', 'TeamController');
+Route::get('team', "Api\TeamController@index");
+Route::post('team', "Api\TeamController@store");
+Route::post('team/join', "Api\TeamController@join");

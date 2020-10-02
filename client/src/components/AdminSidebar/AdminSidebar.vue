@@ -1,8 +1,6 @@
 <template>
     <aside id="admin-sidebar" class="sidebar bg-darkest">
         <div class="sidebar-content p-3">
-            <!-- HEADER -->
-            <h1>Chekker.io</h1>
             <!-- ACTION BUTTON -->
             <button
                 class="btn btn-primary btn-block mx-auto"
@@ -82,13 +80,9 @@
                     <i class="fas fa-cog"></i>
                 </template>
                 <template v-slot:title>
-                    Einstellungen
-                </template>
-                <template v-slot:content>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
-                    aliquam saepe ratione adipisci! At recusandae quae voluptas
-                    iure distinctio! At alias quis enim nesciunt quas beatae
-                    laborum earum, optio sed!
+                    <router-link :to="{ name: 'Settings' }"
+                        >Einstellungen</router-link
+                    >
                 </template>
             </admin-control>
         </div>

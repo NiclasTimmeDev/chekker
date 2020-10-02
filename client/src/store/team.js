@@ -106,6 +106,16 @@ export default {
                 }
                 return false;
             }
+        },
+        async joinTeam({ commit }, accessCode) {
+            try {
+                const res = await axios.post("/api/team/join", {
+                    code: accessCode
+                });
+                console.log(res);
+            } catch (error) {
+                console.log(error.response.data);
+            }
         }
     },
     // ============================
