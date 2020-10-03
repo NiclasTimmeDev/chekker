@@ -30,25 +30,9 @@ export default {
          * @param {object} state
          * @param {object} teams
          */
-        storeTeam(state, team) {
+        storeTeam(state, teams) {
             state.loading = false;
-
-            let isNewTeam;
-            // Replace in state if team already exists.
-            state.teams.forEach((stateTeam, i) => {
-                if (+stateTeam.id === +team.id) {
-                    state.teams[i] = team;
-                    isNewTeam = false;
-                }
-            });
-
-            // Return if it's a new team.
-            if (!isNewTeam) {
-                return;
-            }
-
-            // Add to teams array if team is new.
-            return (state.teams = [...state.teams, team]);
+            state.teams = [...state.teams, teams];
         },
         loadAllTeams(state, teams) {
             state.loading = false;
@@ -114,6 +98,7 @@ export default {
                         "Sie haben nicht die passende Berechtigung."
                     );
                 } else {
+                    console.log(error.response.data);
                     commit(
                         "storeTeamError",
                         "Sorry, etwas ist schief gelaufen."
@@ -127,31 +112,9 @@ export default {
                 const res = await axios.post("/api/team/join", {
                     code: accessCode
                 });
-
-                if (res.status === 200) {
-                    localStorageService.add("current_team", res.data.id, true);
-                    commit("storeTeam", res.data);
-                    return true;
-                }
+                console.log(res);
             } catch (error) {
-                commit("storeTeamError", error.response.data.error);
-            }
-        },
-        async updateTeam({ commit }, newName) {
-            commit("startLoading");
-            const currentTeam = localStorageService.get("current_team");
-
-            try {
-                const res = await axios.patch("/api/team", {
-                    name: newName,
-                    team_id: currentTeam
-                });
-
-                if (res.status === 200) {
-                    commit("storeTeam", res.data);
-                }
-            } catch (error) {
-                commit("storeTeamError", error.response.data.error);
+                console.log(error.response.data);
             }
         }
     },

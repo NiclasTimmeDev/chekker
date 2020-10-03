@@ -1,0 +1,18 @@
+// Mixins.
+@import "./../../node_modules/bootstrap/scss/mixins";
+@import "./mixins";
+
+// Base variables
+@import "./variables.scss";
+
+// Bootstrap.
+@import "./../../node_modules/bootstrap/scss/bootstrap";
+
+// Fonts.
+@import "./fonts";
+
+// Components.
+@import "./components/_headers.scss";
+@import "./components/_navigation.scss";
+@import "./components/_cards.scss";
+@import "./components/_buttons.scss";

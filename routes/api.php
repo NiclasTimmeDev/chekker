@@ -25,3 +25,4 @@ Route::resource('process', 'ProcessController');
 Route::get('team', "Api\TeamController@index");
 Route::post('team', "Api\TeamController@store");
 Route::post('team/join', "Api\TeamController@join");
+Route::patch('team', "Api\TeamController@update");

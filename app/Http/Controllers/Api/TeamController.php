@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Team;
 use Throwable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Helpers\ExceptionHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,37 +82,55 @@ class TeamController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Team  $team
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Team $team)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Team  $team
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Team $team)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Team $team)
+    public function update(Request $request)
     {
-        //
+
+        try {
+            // Check if request is valid.
+            if (!$request->team_id) {
+                return ExceptionHelper::customSingleError("Für welches Team wollen Sie den Namen ändern?.", 400);
+            }
+            if (!$request->name) {
+                return ExceptionHelper::customSingleError("Bitte geben Sie einen neuen Namen ein.", 400);
+            }
+
+            $team_id = $request->team_id;
+            $new_name = $request->name;
+
+            // Generate new access code.
+            $new_access_code = $this->generateAccessCode($new_name);
+
+            // Get current user.
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError("Es konnte leider kein User gefunden werden.", 404);
+            }
+
+            // Get the team.
+            $team = Team::find($team_id);
+            if (!$team) {
+                return ExceptionHelper::customSingleError("Das Team konnte leider nicht gefunden werden.", 404);
+            }
+
+            // Return if user is not creator (admin) of the team.
+            if ((int) $team->user_id !== (int) $user->id) {
+                return ExceptionHelper::customSingleError("Sie besitzen nicht die passenden Rechte für diese Aktion.", 404);
+            }
+
+            // Update team.
+            $team->name = $new_name;
+            $team->access_code = $new_access_code;
+
+            $team->save();
+            return $team;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError("Sorry, etwas ist schief gelaufen.", 500);
+        }
     }
 
     /**
@@ -144,33 +162,35 @@ class TeamController extends Controller
             $access_code = $request->code;
 
             if (!$access_code) {
-                return response()->json(["error" => "Bitte geben Sie einen Zugangscode ein"], 400);
+                return ExceptionHelper::customSingleError("Bitte geben Sie einen Zugangscode ein.", 400);
             }
 
             // Get current user.
             $user = Auth::user();
 
-            // Check if there is a team with the given access code.
-            $team = DB::table('teams')->where('access_code', $access_code)->get();
+            // Return if user not found.
+            if (!$user) {
+                return ExceptionHelper::customSingleError("Es konnte leider kein User gefunden werden.", 404);
+            }
 
-            return $team->id;
+            // Check if there is a team with the given access code.
+            $team = Team::where('access_code', "=", $access_code)->first();
 
             // Return 404 if no team exists
             if (!$team) {
-                return response()->json(
-                    [
-                        "error" => "Es konnte kein Team mit diesem Zugangscode gefunden werden."
-                    ],
-                    404
-                );
+                return ExceptionHelper::customSingleError("Es konnte kein Team mit diesem Zugangscode gefunden werden.", 404);
+            }
+
+            // Return if user is creator of the team.
+            if ($user->id === $team->user_id) {
+                return ExceptionHelper::customSingleError("Sie haben dieses Team selbst erstellt.", 400);
             }
 
             // Attach team to user.
             $user->teams()->attach($team);
             return $team;
         } catch (Throwable $e) {
-            report($e);
-            return false;
+            return ExceptionHelper::customSingleError("Sorry, etwas ist schief gelaufen.", 500);
         }
     }
 
