@@ -7,6 +7,7 @@ import Dashboard from "./../views/Dashboard.vue";
 import CreateTeam from "./../views/Team/CreateTeam.vue";
 import JoinTeam from "./../views/Team/JoinTeam.vue";
 import UpdateTeam from "./../views/Team/UpdateTeam.vue";
+import Team from "./../views/Team/Team.vue";
 
 Vue.use(VueRouter);
 
@@ -32,6 +33,11 @@ const routes = [
     /* ====================
     TEAM
     ==================== */
+    {
+        path: "/team",
+        name: "Team",
+        component: Team
+    },
     {
         path: "/team/create",
         name: "CreateTeam",
