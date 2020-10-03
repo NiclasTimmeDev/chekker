@@ -8,6 +8,7 @@ export default {
     state: () => {
         return {
             teams: [],
+            members: [],
             loading: false,
             errors: ""
         };
@@ -63,6 +64,16 @@ export default {
         storeTeamError(state, error) {
             state.loading = false;
             state.errors = error;
+        },
+        storeTeamMembers(state, members) {
+            state.loading = false;
+            state.members = members;
+            state.errors = "";
+        },
+        storeTeamMembersError(state) {
+            state.loading = false;
+            members = [];
+            state.errors = error;
         }
     },
     // ============================
@@ -101,12 +112,18 @@ export default {
                 return false;
             }
         },
+        /**
+         * Load all teams of the user.
+         *
+         * @param {object} commit
+         *   The commit object.
+         */
         async loadTeams({ commit }) {
             // commit("startLoading");
             try {
                 const res = await axios.get("/api/team");
-
                 commit("loadAllTeams", res.data);
+                return true;
             } catch (error) {
                 if (error.response.status === 401) {
                     commit(
@@ -122,6 +139,15 @@ export default {
                 return false;
             }
         },
+        /**
+         * Send request to join new team.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {string} accessCode
+         *   The access code to the team.
+         * @return boolean
+         */
         async joinTeam({ commit }, accessCode) {
             try {
                 const res = await axios.post("/api/team/join", {
@@ -135,8 +161,18 @@ export default {
                 }
             } catch (error) {
                 commit("storeTeamError", error.response.data.error);
+                return false;
             }
         },
+        /**
+         * Update the own team.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {string} newName
+         *   The new name of the team.
+         * @return boolean.
+         */
         async updateTeam({ commit }, newName) {
             commit("startLoading");
             const currentTeam = localStorageService.get("current_team");
@@ -149,9 +185,25 @@ export default {
 
                 if (res.status === 200) {
                     commit("storeTeam", res.data);
+                    return true;
                 }
             } catch (error) {
                 commit("storeTeamError", error.response.data.error);
+                return false;
+            }
+        },
+        async loadTeamMembers({ commit }) {
+            commit("startLoading");
+            const currentTeam = localStorageService.get("current_team");
+
+            try {
+                const res = await axios.get(`/api/team/members/${currentTeam}`);
+                if (res.status === 200) {
+                    commit("storeTeamMembers", res.data);
+                }
+            } catch (error) {
+                commit("storeTeamMembersError", error.response.data.error);
+                return false;
             }
         }
     },

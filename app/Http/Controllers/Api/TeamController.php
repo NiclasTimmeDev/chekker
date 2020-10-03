@@ -7,6 +7,7 @@ use Throwable;
 use Illuminate\Http\Request;
 use App\Helpers\ExceptionHelper;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 
 class TeamController extends Controller
@@ -142,6 +143,44 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         //
+    }
+
+    /**
+     * Get all team members.
+     * 
+     * @param \Illuminate\Http\Request  $request
+     *   The request object.
+     * @param int $team_id
+     *   The team id.
+     */
+    public function getTeamMembers(Request $request, $team_id)
+    {
+        try {
+            // Get Team id from req.
+            if (!$team_id) {
+                return ExceptionHelper::customSingleError("Bitte geben Sie ein Team an.", 400);
+            }
+
+            // Get current user.
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError("User nicht gefunden.", 404);
+            }
+
+            // Get members of the team.
+            $members = User::whereHas("teams", function ($q) use ($team_id) {
+                $q->where("team_id", $team_id);
+            })->get();
+
+            // Return if no members found.
+            if (!$members) {
+                return ExceptionHelper::customSingleError("Keine Mitglieder gefunden.", 404);
+            }
+
+            return $members;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError("Sorry, etwas ist schief gelaufen.", 500);
+        }
     }
 
     /**
