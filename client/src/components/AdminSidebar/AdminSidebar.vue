@@ -51,10 +51,14 @@
                     Team
                 </template>
                 <template v-slot:content>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
-                    aliquam saepe ratione adipisci! At recusandae quae voluptas
-                    iure distinctio! At alias quis enim nesciunt quas beatae
-                    laborum earum, optio sed!
+                    <ul>
+                        <li class="mt-3 mb-3">
+                            <router-link to="/team">Teammitglieder</router-link>
+                        </li>
+                        <li class="mb-3">
+                            <router-link to="/team">Neues Mitglied</router-link>
+                        </li>
+                    </ul>
                 </template>
             </admin-control>
 
@@ -127,6 +131,20 @@ export default {
 
         .btn {
             margin-bottom: 30px;
+        }
+
+        ul {
+            list-style-type: none;
+
+            li {
+                a {
+                    color: #fff;
+                    font-size: 0.8rem;
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
         }
     }
 
