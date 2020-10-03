@@ -33,6 +33,8 @@ class CreateProcessesTable extends Migration
 
             // The category of the process
             $table->unsignedBigInteger('category_id')->nullable();
+
+            $table->boolean('is_active')->default(false);
         });
     }
 

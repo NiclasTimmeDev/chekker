@@ -35,6 +35,8 @@ class CreateTasksTable extends Migration
 
             // The description of the task.
             $table->text('description');
+
+            $table->boolean('is_done')->default(false);
         });
     }
 
