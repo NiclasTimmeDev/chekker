@@ -19,6 +19,9 @@
                             name="name"
                             v-model="form.name"
                         />
+                        <div class="invalid-feedback">
+                            {{ formErrors.name }}
+                        </div>
                     </div>
                     <!-- DESCRIPTION -->
                     <div class="form-group">
@@ -30,6 +33,9 @@
                             name="description"
                             v-model="form.description"
                         ></textarea>
+                        <div class="invalid-feedback">
+                            {{ formErrors.description }}
+                        </div>
                     </div>
                     <!-- PERMISSIONS -->
                     <label>Rechte</label>
@@ -114,8 +120,14 @@
                             </div>
                         </template>
                     </div>
+                    <div class="invalid-feedback">
+                        {{ formErrors.permission }}
+                    </div>
                     <!-- SUBMIT -->
-                    <button class="btn btn-primary mt-4">
+                    <button
+                        class="btn btn-primary mt-4"
+                        @click.prevent="submit"
+                    >
                         Prozess erstellen
                     </button>
                 </form>
@@ -137,6 +149,11 @@ export default {
                 description: "",
                 permission: "",
                 allowedMembers: []
+            },
+            formErrors: {
+                name: "",
+                description: "",
+                permission: ""
             },
             teamMembers: []
         };
@@ -166,7 +183,66 @@ export default {
     // METHODS
     // ============================
     methods: {
-        ...mapActions(["loadTeamMembers"])
+        ...mapActions(["loadTeamMembers"]),
+        /**
+         * Check if all required values of the form are set.
+         */
+        _validateInputs() {
+            // No name.
+            if (!this.form.name) {
+                this.formErrors.name = "Bitte geben Sie einen Namen ein.";
+            } else {
+                this.formErrors.name = "";
+            }
+
+            // No description.
+            if (!this.form.description) {
+                this.formErrors.description =
+                    "Bitte geben Sie eine Beschreibung ein.";
+            } else {
+                this.formErrors.description = "";
+            }
+
+            // No permission.
+            if (!this.form.permission) {
+                this.formErrors.permission =
+                    "Bitte vergeben Sie Berechtigungen.";
+            }
+
+            // Advanced permission but no team members selected.
+            if (
+                this.form.permission === "advanced" &&
+                this.form.allowedMembers.length === 0
+            ) {
+                this.formErrors.permission =
+                    "Bitte vergeben Sie Berechtigungen für einzelne Teammitglieder.";
+            }
+            // Permission other than advanced.
+            if (this.form.permission && this.form.permission !== "advanced") {
+                this.formErrors.permission = "";
+            }
+            // Advanced permission but no members selected.
+            if (
+                this.form.permission === "advanced" &&
+                this.form.allowedMembers.length !== 0
+            ) {
+                this.formErrors.permission = "";
+            }
+        },
+        /**
+         * Submit the form.
+         */
+        async submit() {
+            // Early return if inputs are invalid.
+            this._validateInputs();
+            if (
+                this.formErrors.name ||
+                this.formErrors.description ||
+                this.formErrors.permission
+            ) {
+                return;
+            }
+        }
     },
     // ============================
     // beforeUpdate
@@ -196,3 +272,9 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+.invalid-feedback {
+    display: block;
+}
+</style>
