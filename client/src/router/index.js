@@ -4,10 +4,13 @@ import VueRouter from "vue-router";
 import Login from "./../views/Login.vue";
 import Register from "./../views/Register.vue";
 import Dashboard from "./../views/Dashboard.vue";
+// TEAM
 import CreateTeam from "./../views/Team/CreateTeam.vue";
 import JoinTeam from "./../views/Team/JoinTeam.vue";
 import UpdateTeam from "./../views/Team/UpdateTeam.vue";
 import Team from "./../views/Team/Team.vue";
+// PROCESSES
+import CreateProcess from "./../views/Process/CreateProcess.vue";
 
 Vue.use(VueRouter);
 
@@ -52,6 +55,14 @@ const routes = [
         path: "/team/update",
         name: "UpdateTeam",
         component: UpdateTeam
+    },
+    /* ====================
+    PROCESSES
+    ==================== */
+    {
+        path: "/process/create",
+        name: "CreateProcess",
+        component: CreateProcess
     }
 ];
 

@@ -9,6 +9,7 @@ export default {
         return {
             teams: [],
             members: [],
+            membersLoaded: false,
             loading: false,
             errors: ""
         };
@@ -67,11 +68,13 @@ export default {
         },
         storeTeamMembers(state, members) {
             state.loading = false;
+            state.membersLoaded = true;
             state.members = members;
             state.errors = "";
         },
         storeTeamMembersError(state) {
             state.loading = false;
+            state.membersLoaded = false;
             members = [];
             state.errors = error;
         }
@@ -218,6 +221,14 @@ export default {
          */
         getTeams: state => {
             return state.teams;
+        },
+        /**
+         * Retrieve members from state.
+         *
+         * @param state
+         */
+        getMembers: state => {
+            return state.members;
         }
     }
 };
