@@ -25,8 +25,8 @@ class CreateProcessesTable extends Migration
             // The team the process belongs to.
             $table->unsignedBigInteger('team_id')->nullable();
 
-            // Default timestamps.
-            $table->timestamps();
+            // The permission that the team of the user has for the process.
+            $table->string('permission')->nullable();
 
             // The recurrence pattern of the process.
             $table->string('recurrence_pattern')->nullable();
@@ -35,6 +35,9 @@ class CreateProcessesTable extends Migration
             $table->unsignedBigInteger('category_id')->nullable();
 
             $table->boolean('is_active')->default(false);
+
+            // Default timestamps.
+            $table->timestamps();
         });
     }
 

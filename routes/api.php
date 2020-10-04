@@ -18,12 +18,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Procecces.
-Route::resource('process', 'ProcessController');
-
-// Teams.
+//===============
+// Team
+//===============
+// Get teams of the user.
 Route::get('team', "Api\TeamController@index");
+// Create a new team.
 Route::post('team', "Api\TeamController@store");
+// Join a team.
 Route::post('team/join', "Api\TeamController@join");
+// Update a team.
 Route::patch('team', "Api\TeamController@update");
+// Get team members of one team.
 Route::get('team/members/{team_id}', "Api\TeamController@getTeamMembers");
+
+//===============
+// PROCESS
+//===============
+// Create a new process.
+Route::post('process', "ProcessController@store");

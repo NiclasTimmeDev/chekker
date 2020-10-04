@@ -183,7 +183,24 @@ export default {
     // METHODS
     // ============================
     methods: {
-        ...mapActions(["loadTeamMembers"]),
+        ...mapActions(["loadTeamMembers", "createProcess"]),
+        /**
+         * Submit the form.
+         */
+        async submit() {
+            // Early return if inputs are invalid.
+            this._validateInputs();
+            if (
+                this.formErrors.name ||
+                this.formErrors.description ||
+                this.formErrors.permission
+            ) {
+                return;
+            }
+
+            // Send req to api via vuex.
+            this.createProcess(this.form);
+        },
         /**
          * Check if all required values of the form are set.
          */
@@ -228,20 +245,6 @@ export default {
             ) {
                 this.formErrors.permission = "";
             }
-        },
-        /**
-         * Submit the form.
-         */
-        async submit() {
-            // Early return if inputs are invalid.
-            this._validateInputs();
-            if (
-                this.formErrors.name ||
-                this.formErrors.description ||
-                this.formErrors.permission
-            ) {
-                return;
-            }
         }
     },
     // ============================
@@ -254,6 +257,7 @@ export default {
     beforeUpdate() {
         // Don't do anything if permission is not set to advanced.
         if (this.form.permission !== "advanced") {
+            this.form.allowedMembers = [];
             return;
         }
 

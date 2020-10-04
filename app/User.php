@@ -16,6 +16,12 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Team')->withTimestamps();
     }
 
+    // m:n relationship with processes.
+    public function processes()
+    {
+        return $this->belongsToMany('App\Process')->withTimestamps();
+    }
+
     /**
      * The attributes that are mass assignable.
      *
