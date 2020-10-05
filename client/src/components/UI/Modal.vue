@@ -34,6 +34,7 @@ export default {
     .modal-header {
         color: black;
         border-bottom: none;
+        padding-bottom: 0;
     }
 }
 </style>

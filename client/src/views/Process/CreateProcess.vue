@@ -123,6 +123,16 @@
                     <div class="invalid-feedback">
                         {{ formErrors.permission }}
                     </div>
+                    <!-- TAGS -->
+                    <div class="form-group">
+                        <label for="color-picker">Tags</label>
+                        <input
+                            id="color-picker"
+                            type="color"
+                            v-model="newTag.color"
+                        />
+                        {{ newTag.color }}
+                    </div>
                     <!-- SUBMIT -->
                     <button
                         class="btn btn-primary mt-4"
@@ -155,7 +165,11 @@ export default {
                 description: "",
                 permission: ""
             },
-            teamMembers: []
+            teamMembers: [],
+            newTag: {
+                color: "",
+                name: ""
+            }
         };
     },
     // ============================

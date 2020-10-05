@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ExceptionHelper;
+use App\User;
 use Throwable;
 use App\Process;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Helpers\ExceptionHelper;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ProcessController extends Controller
 {
@@ -86,7 +87,7 @@ class ProcessController extends Controller
 
             // For every user granted with access create new entry in pivot table.
             foreach ($allowed_members as $member_id) {
-                User::find($member_id)->attach($new_process);
+                User::find($member_id)->processes()->attach($new_process);
             }
             return $new_process;
         } catch (Throwable $e) {
