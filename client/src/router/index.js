@@ -11,6 +11,8 @@ import UpdateTeam from "./../views/Team/UpdateTeam.vue";
 import Team from "./../views/Team/Team.vue";
 // PROCESSES
 import CreateProcess from "./../views/Process/CreateProcess.vue";
+// TAG
+import CreateTag from "./../views/Tag/CreateTag.vue";
 
 Vue.use(VueRouter);
 
@@ -63,6 +65,14 @@ const routes = [
         path: "/process/create",
         name: "CreateProcess",
         component: CreateProcess
+    },
+    /* ====================
+    TAG
+    ==================== */
+    {
+        path: "/tag/create",
+        name: "CreateTag",
+        component: CreateTag
     }
 ];
 

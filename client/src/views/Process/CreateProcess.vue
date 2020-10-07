@@ -150,7 +150,7 @@ import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "./../../components/FullPageSpinner.vue";
 export default {
     // ============================
-    // COMPUTED
+    // DATA
     // ============================
     data() {
         return {

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Tag;
+use App\Team;
+use Throwable;
 use Illuminate\Http\Request;
+use App\Helpers\ExceptionHelper;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
@@ -35,7 +39,45 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            // Get values from request
+            $title = $request->title;
+            $background = $request->background;
+            $text = $request->text;
+            $team_id = $request->team_id;
+
+            // Send error if values are missing.
+            if (!$title || !$background || !$text || !$team_id) {
+                return ExceptionHelper::customSingleError('Nicht alle Felder sind valide', 400);
+            }
+
+            // Strip title.
+            $title =  filter_var($title, FILTER_SANITIZE_STRING);
+
+            // Check if tag with the same name already exits.
+            $existing_tag = Tag::where('team_id', $team_id)->where('title', $title)->first();
+            if ($existing_tag) {
+                return ExceptionHelper::customSingleError('Ein Tag mit diesem Namen existiert bereits.', 400);
+            }
+
+            // Check if team exists and user is a member of the team.
+            $user = Auth::user();
+            $is_member = $user->teams()->wheren('team_id', $team_id)->exits();
+            if (!$is_member) {
+                return ExceptionHelper::customSingleError('Entweder existiert das Team nicht oder Sie sind kein Mitglied', 401);
+            }
+
+            // Create new instance of Tag.
+            $new_tag = new Tag([
+                'title' => $title,
+                'team_id' => $team_id,
+                'background' => $background,
+                'text' => $text
+            ]);
+
+            $new_tag->save();
+            return $new_tag;
+        } catch (Throwable $e) { }
     }
 
     /**

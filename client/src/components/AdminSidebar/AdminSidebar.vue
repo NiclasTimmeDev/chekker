@@ -30,6 +30,11 @@
                                 >Prozess</router-link
                             >
                         </li>
+                        <li class="list-group-item">
+                            <router-link to="/tag/create" class="text-primary"
+                                >Tag</router-link
+                            >
+                        </li>
                     </ul>
                 </template>
             </create-new-modal>
