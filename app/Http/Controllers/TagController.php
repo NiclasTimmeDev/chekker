@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Tag;
-use App\Team;
 use Throwable;
 use Illuminate\Http\Request;
 use App\Helpers\ExceptionHelper;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
@@ -44,7 +44,7 @@ class TagController extends Controller
             $title = $request->title;
             $background = $request->background;
             $text = $request->text;
-            $team_id = $request->team_id;
+            $team_id = (int) $request->team_id;
 
             // Send error if values are missing.
             if (!$title || !$background || !$text || !$team_id) {
@@ -62,7 +62,7 @@ class TagController extends Controller
 
             // Check if team exists and user is a member of the team.
             $user = Auth::user();
-            $is_member = $user->teams()->wheren('team_id', $team_id)->exits();
+            $is_member = $user->teams()->where('team_id', $team_id)->exists();
             if (!$is_member) {
                 return ExceptionHelper::customSingleError('Entweder existiert das Team nicht oder Sie sind kein Mitglied', 401);
             }
@@ -77,7 +77,9 @@ class TagController extends Controller
 
             $new_tag->save();
             return $new_tag;
-        } catch (Throwable $e) { }
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
     }
 
     /**

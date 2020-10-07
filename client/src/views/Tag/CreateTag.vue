@@ -31,10 +31,10 @@
                             class="form-control form-control-color"
                             id="color-picker"
                             name="color"
-                            v-model="form.backgroundColor"
+                            v-model="form.background"
                         />
                         <div class="invalid-feedback">
-                            {{ formErrors.backgroundColor }}
+                            {{ formErrors.background }}
                         </div>
                     </div>
                 </form>
@@ -46,10 +46,10 @@
                         class="form-control form-control-color"
                         id="color-picker"
                         name="color"
-                        v-model="form.textColor"
+                        v-model="form.text"
                     />
                     <div class="invalid-feedback">
-                        {{ formErrors.textColor }}
+                        {{ formErrors.text }}
                     </div>
                 </div>
                 <!-- PREVIEW -->
@@ -63,13 +63,13 @@
                     <Tag
                         v-else
                         :title="form.title"
-                        :background="form.backgroundColor"
-                        :text="form.textColor"
+                        :background="form.background"
+                        :text="form.text"
                     ></Tag>
                 </div>
 
                 <!-- SUBMIT -->
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" @click.prevent="createNewTag">
                     Speichern
                 </button>
             </div>
@@ -88,15 +88,24 @@ export default {
         return {
             form: {
                 title: "",
-                backgroundColor: "#0f0f0f",
-                textColor: "#f0f0f0"
+                background: "#0f0f0f",
+                text: "#f0f0f0"
             },
             formErrors: {
                 title: "",
-                backgroundColor: "",
-                textColor: ""
+                background: "",
+                text: ""
             }
         };
+    },
+    // ============================
+    // ACTIONS
+    // ============================
+    methods: {
+        ...mapActions(["createTag"]),
+        createNewTag() {
+            this.createTag(this.form);
+        }
     },
     // ============================
     // COMPONTENTS

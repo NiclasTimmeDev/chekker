@@ -6,6 +6,7 @@ Vue.use(Vuex);
 import auth from "./auth/authStore";
 import team from "./team";
 import process from "./process";
+import tag from "./tag";
 
 export default new Vuex.Store({
     state: {},
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     modules: {
         auth,
         team,
-        process
+        process,
+        tag
     }
 });
