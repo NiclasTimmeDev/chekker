@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Tag;
+use App\Team;
+use App\User;
 use Throwable;
 use Illuminate\Http\Request;
 use App\Helpers\ExceptionHelper;
-use App\User;
 use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller

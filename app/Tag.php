@@ -15,4 +15,9 @@ class Tag extends Model
     {
         return $this->belongsTo('App\Team');
     }
+    // m:n relationship with processes.
+    public function processes()
+    {
+        return $this->belongsToMany('App\Process')->withTimestamps();
+    }
 }

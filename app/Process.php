@@ -21,4 +21,9 @@ class Process extends Model
     {
         return $this->belongsToMany('App\User')->withTimestamps();
     }
+    // m:n relationship with tags.
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag')->withTimestamps();
+    }
 }

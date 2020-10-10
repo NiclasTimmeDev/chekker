@@ -54,12 +54,19 @@ export default {
         async createProcess({ commit }, form) {
             try {
                 // Get params from form.
-                let { name, description, permission, allowedMembers } = form;
+                let {
+                    name,
+                    description,
+                    permission,
+                    allowedMembers,
+                    tags
+                } = form;
 
-                // Transform allowedMembers form Vue observer obj to array.
+                // Transform allowedMembers and tags from Vue observer obj to array.
                 allowedMembers = JSON.parse(
                     JSON.stringify(form.allowedMembers)
                 );
+                tags = JSON.parse(JSON.stringify(form.tags));
 
                 // Get currently selected team from local storage.
                 const currentTeam = localStorageService.get("current_team");
@@ -70,7 +77,8 @@ export default {
                     name: name,
                     description: description,
                     permission: permission,
-                    allowed_members: allowedMembers
+                    allowed_members: allowedMembers,
+                    tags: tags
                 });
 
                 // Store new team if request was successful.

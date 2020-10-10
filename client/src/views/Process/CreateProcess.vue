@@ -142,7 +142,10 @@
                                 <h4>Fügen Sie Tags hinzu</h4>
                             </template>
                             <template v-slot:body>
-                                <ul class="list-group list-group-flush">
+                                <ul
+                                    class="list-group list-group-flush"
+                                    v-if="!tag.loading"
+                                >
                                     <li
                                         v-for="tag in tag.tags"
                                         :key="tag.id"
@@ -152,7 +155,7 @@
                                             class="form-check-input"
                                             type="checkbox"
                                             :value="tag.id"
-                                            :id="member.id"
+                                            :id="tag.id"
                                             v-model="form.tags"
                                         />
                                         <Tag
@@ -230,9 +233,6 @@ export default {
             this.teamMembers = this.team.members.filter(member => {
                 return this.auth.user.id !== member.id;
             });
-        },
-        getTags() {
-            this.form.tags = this.tag.tags;
         }
     },
     // ============================
@@ -344,5 +344,13 @@ export default {
 <style lang="scss" scoped>
 .invalid-feedback {
     display: block;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center;
+    input {
+        margin-top: 0;
+    }
 }
 </style>

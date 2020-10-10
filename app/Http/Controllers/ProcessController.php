@@ -8,6 +8,7 @@ use App\Process;
 use Illuminate\Http\Request;
 use App\Helpers\ExceptionHelper;
 use App\Http\Controllers\Controller;
+use App\Team;
 use Illuminate\Support\Facades\Auth;
 
 class ProcessController extends Controller
@@ -48,6 +49,7 @@ class ProcessController extends Controller
             $description = $request->description;
             $permission = $request->permission;
             $allowed_members = $request->allowed_members;
+            $tags = $request->tags;
 
             // Early return if one param is not given in request (except allowed users).
             if (
@@ -73,7 +75,29 @@ class ProcessController extends Controller
                 "permission" => $permission
             ]);
 
+
+
             $new_process->save();
+
+            // If tags are given, check if they belong to the team.
+            $team = Team::find($team_id);
+            $tag_error = false;
+            if ($tags) {
+                foreach ($tags as $tag) {
+                    // Check if tag belongs to the team.
+                    if (!$team->tags($tag)->exists()) {
+                        $tag_error = true;
+                        exit;
+                    }
+
+                    $new_process->tags()->attach($tag);
+                }
+
+                // Exit if error detected.
+                if ($tag_error) {
+                    return ExceptionHelper::customSingleError('Sie haben für ein oder mehrere Tags nicht die Berechtigung.', 401);
+                }
+            }
 
             // Do no more if permission is not set to advanced.
             if ($permission !== 'advanced') {

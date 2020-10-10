@@ -8,7 +8,7 @@ export default {
     state: () => {
         return {
             tags: [],
-            loading: false,
+            loading: true,
             error: ""
         };
     },
