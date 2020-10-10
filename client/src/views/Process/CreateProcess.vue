@@ -5,6 +5,7 @@
                 <h1>Neuer Prozess</h1>
             </div>
         </div>
+
         <div class="row justify-content-center">
             <div class="col-md-9 col-lg-8">
                 <form>
@@ -125,14 +126,46 @@
                     </div>
                     <!-- TAGS -->
                     <div class="form-group">
-                        <label for="color-picker">Tags</label>
-                        <input
-                            id="color-picker"
-                            type="color"
-                            v-model="newTag.color"
-                        />
-                        {{ newTag.color }}
+                        <button
+                            class="btn btn-outline-primary btn-sm"
+                            @click.prevent="toggleTagsModal"
+                        >
+                            Tags hinzufügen
+                        </button>
+                        <!-- TAGS MODAL -->
+                        <Modal
+                            :showModal="showTagsModal"
+                            :toggleModal="toggleTagsModal"
+                            :limitHeight="true"
+                        >
+                            <template v-slot:title>
+                                <h4>Fügen Sie Tags hinzu</h4>
+                            </template>
+                            <template v-slot:body>
+                                <ul class="list-group list-group-flush">
+                                    <li
+                                        v-for="tag in tag.tags"
+                                        :key="tag.id"
+                                        class="list-group-item"
+                                    >
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            :value="tag.id"
+                                            :id="member.id"
+                                            v-model="form.tags"
+                                        />
+                                        <Tag
+                                            :title="tag.title"
+                                            :background="tag.background"
+                                            :text="tag.text"
+                                        ></Tag>
+                                    </li>
+                                </ul>
+                            </template>
+                        </Modal>
                     </div>
+
                     <!-- SUBMIT -->
                     <button
                         class="btn btn-primary mt-4"
@@ -148,6 +181,10 @@
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "./../../components/FullPageSpinner.vue";
+import Tag from "./../../components/Tag";
+import Accordion from "./../../components/UI/Accordion/Accordion";
+import AccordionItem from "./../../components/UI/Accordion/AccordionItem";
+import Modal from "./../../components/UI/Modal.vue";
 export default {
     // ============================
     // DATA
@@ -158,7 +195,8 @@ export default {
                 name: "",
                 description: "",
                 permission: "",
-                allowedMembers: []
+                allowedMembers: [],
+                tags: []
             },
             formErrors: {
                 name: "",
@@ -169,15 +207,16 @@ export default {
             newTag: {
                 color: "",
                 name: ""
-            }
+            },
+            showTagsModal: false
         };
     },
     // ============================
     // COMPUTED
     // ============================
     computed: {
-        ...mapState(["team", "auth"]),
-        ...mapGetters(["getMembers"])
+        ...mapState(["team", "auth", "tag"]),
+        ...mapGetters(["getMembers", "getTags"])
     },
     // ============================
     // WATCHERS
@@ -191,13 +230,16 @@ export default {
             this.teamMembers = this.team.members.filter(member => {
                 return this.auth.user.id !== member.id;
             });
+        },
+        getTags() {
+            this.form.tags = this.tag.tags;
         }
     },
     // ============================
     // METHODS
     // ============================
     methods: {
-        ...mapActions(["loadTeamMembers", "createProcess"]),
+        ...mapActions(["loadTeamMembers", "createProcess", "getAllTags"]),
         /**
          * Submit the form.
          */
@@ -259,6 +301,10 @@ export default {
             ) {
                 this.formErrors.permission = "";
             }
+        },
+        toggleTagsModal() {
+            this.getAllTags();
+            this.showTagsModal = !this.showTagsModal;
         }
     },
     // ============================
@@ -286,7 +332,11 @@ export default {
     // COMPONENTS
     // ============================
     components: {
-        "full-page-spinner": FullPageSpinner
+        "full-page-spinner": FullPageSpinner,
+        Tag: Tag,
+        Accordion: Accordion,
+        AccordionItem: AccordionItem,
+        Modal: Modal
     }
 };
 </script>

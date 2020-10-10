@@ -47,6 +47,10 @@ export default {
     .panel-accordion--header {
         cursor: pointer;
         color: white;
+        font-weight: normal;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
 
         span {
             display: inline-block;
@@ -55,6 +59,7 @@ export default {
 
         .chevron-icon {
             padding-left: 8px;
+            font-size: 0.8rem;
             transition: 0.2s ease-in-out;
         }
 

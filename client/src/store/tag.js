@@ -1,6 +1,5 @@
 import axios from "axios";
 import localStorageService from "./../services/localStorageService";
-import { identity } from "lodash";
 
 export default {
     // ============================
@@ -10,7 +9,7 @@ export default {
         return {
             tags: [],
             loading: false,
-            errors: ""
+            error: ""
         };
     },
     // ============================
@@ -35,7 +34,7 @@ export default {
          * @param {array} tags
          *   All tags of the current team.
          */
-        loadAllTags(state, tags) {
+        storeAllTags(state, tags) {
             state.loading = false;
             state.tags = tags;
             state.error = "";
@@ -61,6 +60,16 @@ export default {
     // ACTIONS
     // ============================
     actions: {
+        /**
+         * Create a new tag.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {*} tag
+         *   The tag object.
+         *
+         * @return Boolean
+         */
         async createTag({ commit }, tag) {
             try {
                 const { title, background, text } = tag;
@@ -68,13 +77,13 @@ export default {
                 // Check if fields exist.
                 if (!title || !background || !text) {
                     commit("storeError", "Bitte füllen Sie alle Felder aus.");
-                    return;
+                    return false;
                 }
 
                 // Check if a team is selected.
                 if (!currentTeam) {
                     commit("storeError", "Sie müssen ein Team wählen.");
-                    return;
+                    return false;
                 }
 
                 // Make Api req.
@@ -88,11 +97,53 @@ export default {
                 // Store tag if req was successful.
                 if (res.status === 201) {
                     commit("addSingleTag", res.data);
+                    return true;
                 }
             } catch (error) {
-                console.log(error);
-                commit("storeError", error.response);
+                commit("storeError", error.response.data.error);
+                return false;
             }
+        },
+        /**
+         * Get all tags of the current teams.
+         *
+         * @param {object} commit
+         *   The commit object.
+         */
+        async getAllTags({ commit }) {
+            try {
+                // Get the current team id.
+                const currentTeam = localStorageService.get("current_team");
+
+                // Make api request.
+                const res = await axios.get(`/api/tag/${currentTeam}`);
+
+                // Store all teams if response status is not 200.
+                if (res.status !== 200) {
+                    commit("storeError", error.response.data.error);
+                    return false;
+                }
+
+                // Store error if resonse code was 200;
+                commit("storeAllTags", res.data);
+                return true;
+            } catch (error) {
+                commit("storeError", error.response.data.error);
+                return false;
+            }
+        }
+    },
+    // ============================
+    // GETTERS
+    // ============================
+    getters: {
+        /**
+         * Retrieve tags from state.
+         *
+         * @param state
+         */
+        getTags: state => {
+            return state.tags;
         }
     }
 };

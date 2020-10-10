@@ -7,6 +7,12 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-9 col-lg-8">
+                <!-- ALERT MESSAGE -->
+                <template v-if="tag.error">
+                    <div class="alert alert-danger" role="alert">
+                        {{ tag.error }}
+                    </div>
+                </template>
                 <form>
                     <!-- TITLE -->
                     <div class="form-group">
@@ -104,8 +110,50 @@ export default {
     methods: {
         ...mapActions(["createTag"]),
         createNewTag() {
-            this.createTag(this.form);
+            if (this._validateForm()) {
+                this.createTag(this.form);
+            }
+        },
+        _validateForm() {
+            // Title
+            if (!this.form.title) {
+                this.formErrors.title = "Bite geben Sie einen Titel ein.";
+            } else {
+                this.formErrors.title = "";
+            }
+            // Background Color
+            if (!this.form.background) {
+                this.formErrors.background =
+                    "Bitte wählen Sie eine Hintergrundfarbe aus.";
+            } else {
+                this.formErrors.background = "";
+            }
+            // Text Color
+            if (!this.form.text) {
+                this.formErrors.text = "Bitte wählen Sie eine Textfarbe aus.";
+            } else {
+                this.formErrors.text = "";
+            }
+
+            // Return true if no errors.
+            if (
+                !this.formErrors.title &&
+                !this.formErrors.background &&
+                !this.formErrors.text
+            ) {
+                return true;
+            }
+
+            // Return false if errors.
+            return false;
         }
+    },
+
+    // ============================
+    // COMPUTED
+    // ============================
+    computed: {
+        ...mapState(["tag", "auth"])
     },
     // ============================
     // COMPONTENTS
@@ -127,5 +175,9 @@ export default {
     label {
         display: block;
     }
+}
+
+.invalid-feedback {
+    display: block;
 }
 </style>

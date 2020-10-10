@@ -1,5 +1,4 @@
 <template>
-    <!-- <h4>{{ currentName }}</h4> -->
     <select
         class="custom-select custom-select-sm mb-4"
         v-model="currentTeamID"
@@ -31,6 +30,7 @@ export default {
             const id = localStorageService.get("current_team");
             if (!id) {
                 this.currentTeamID = "";
+                return;
             }
 
             this.currentTeamID = id;
@@ -64,6 +64,7 @@ export default {
     // ============================
     watch: {
         getTeams() {
+            console.log("getTeams");
             this.getCurrentTeamID();
             this.mapCurrentIDtoName();
         }
@@ -72,7 +73,7 @@ export default {
     // beforeMount
     // ============================
     beforeMount() {
-        this.currentTeamID = this.getCurrentTeamID;
+        this.currentTeamID = this.getCurrentTeamID();
     }
 };
 </script>

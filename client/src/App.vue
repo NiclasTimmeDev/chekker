@@ -1,28 +1,36 @@
-:`<template>
-    <div class="flex-container">
-        <div class="flex">
-            <app-admin-sidebar></app-admin-sidebar>
-        </div>
-        <div class="body-flex">
-            <div class="container-fluid">
-                <router-view></router-view>
+<template>
+    <div>
+        <full-page-spinner v-if="auth.loading"></full-page-spinner>
+        <div class="flex-container">
+            <div class="flex">
+                <app-admin-sidebar></app-admin-sidebar>
+            </div>
+            <div class="body-flex">
+                <div class="container-fluid">
+                    <router-view></router-view>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import Navbar from "./components/shared/Navbar";
 import AdminSidebar from "./components/AdminSidebar/AdminSidebar";
+import FullPageSpinner from "./components/FullPageSpinner";
 
 export default {
     components: {
         "app-navbar": Navbar,
-        "app-admin-sidebar": AdminSidebar
+        "app-admin-sidebar": AdminSidebar,
+        "full-page-spinner": FullPageSpinner
     },
     methods: {
         ...mapActions(["loadUser", "loadTeams"])
+    },
+    computed: {
+        ...mapState(["auth"])
     },
     mounted() {
         this.loadUser();

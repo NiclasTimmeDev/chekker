@@ -12,13 +12,30 @@ use Illuminate\Support\Facades\Auth;
 class TagController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
+     * Display all tags of a team.
+     * 
+     * @param \Illuminate\Http\Request $request
+     *   The request object.
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            // Get values from request.
+            $team_id = $request->team_id;
+
+            // Check if team exists and user is a member of the team.
+            if (!$this->validateTeam($team_id)) {
+                return ExceptionHelper::customSingleError('Entweder existiert das Team nicht oder Sie sind kein Mitglied', 401);
+            }
+
+            // Get all tags of the team.
+            $tags = Team::find($team_id)->tags()->get();
+
+            return $tags;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
     }
 
     /**
@@ -61,9 +78,7 @@ class TagController extends Controller
             }
 
             // Check if team exists and user is a member of the team.
-            $user = Auth::user();
-            $is_member = $user->teams()->where('team_id', $team_id)->exists();
-            if (!$is_member) {
+            if (!$this->validateTeam($team_id)) {
                 return ExceptionHelper::customSingleError('Entweder existiert das Team nicht oder Sie sind kein Mitglied', 401);
             }
 
@@ -75,6 +90,7 @@ class TagController extends Controller
                 'text' => $text
             ]);
 
+            // Save tag and return response.   
             $new_tag->save();
             return $new_tag;
         } catch (Throwable $e) {
@@ -125,5 +141,22 @@ class TagController extends Controller
     public function destroy(Tag $tag)
     {
         //
+    }
+
+    /**
+     * Check if a team exists and if user is a member.
+     * 
+     * @param string $team_id
+     *   The id of the team.
+     */
+    private function validateTeam($team_id)
+    {
+        $user = Auth::user();
+        $is_member = $user->teams()->where('team_id', $team_id)->exists();
+        if (!$is_member) {
+            return false;
+        }
+
+        return true;
     }
 }

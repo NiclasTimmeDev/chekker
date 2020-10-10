@@ -133,10 +133,13 @@ export default {
 
 <style lang="scss" scoped>
 .sidebar {
-    width: 25vw;
+    width: 20vw;
+    max-width: 300px;
     height: 100vh;
     position: sticky;
     overflow: scroll;
+    overflow-y: hidden;
+    overflow-x: hidden;
     left: 0;
     top: 0;
     z-index: 101;

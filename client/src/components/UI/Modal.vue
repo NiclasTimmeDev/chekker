@@ -1,8 +1,13 @@
 <template>
     <div v-if="showModal">
-        <div class="modal" @click="toggleModal">
+        <div class="modal">
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
+                <div
+                    class="modal-content"
+                    :class="{ 'limit-height': limitHeight }"
+                >
+                    <!-- CLOSE ICON -->
+                    <i class="fas fa-times" @click="toggleModal"></i>
                     <div class="modal-header">
                         <!-- SLOT TITLE -->
                         <slot name="title"></slot>
@@ -21,20 +26,7 @@
 
 <script>
 export default {
-    props: ["showModal", "toggleModal"]
+    props: ["showModal", "toggleModal", "limitHeight"]
 };
 </script>
-
-<style lang="scss" scoped>
-.modal {
-    display: block;
-
-    color: black !important;
-
-    .modal-header {
-        color: black;
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-}
-</style>
+<style lang="scss"></style>

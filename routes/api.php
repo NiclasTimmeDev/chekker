@@ -41,5 +41,7 @@ Route::post('process', "ProcessController@store");
 //===============
 // TAG
 //===============
+// Get all tags of a team.
+Route::get('tag/{team_id}', 'tag', 'TagController@index');
 // Create a new tag.
 Route::post('tag', 'TagController@store');
