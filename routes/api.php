@@ -37,6 +37,8 @@ Route::get('team/members/{team_id}', "Api\TeamController@getTeamMembers");
 //===============
 // Create a new process.
 Route::post('process', "ProcessController@store");
+// Get all processes of the users current team.
+Route::get('process/{team_id}', "ProcessController@index");
 
 //===============
 // TAG

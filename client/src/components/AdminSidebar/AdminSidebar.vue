@@ -50,7 +50,7 @@
                 <template v-slot:content>
                     <ul>
                         <li class="mt-3 mb-3">
-                            <router-link to="/process"
+                            <router-link to="/process/view"
                                 >Alle Prozesse</router-link
                             >
                         </li>
@@ -72,7 +72,9 @@
                             <router-link to="/team">Teammitglieder</router-link>
                         </li>
                         <li class="mb-3">
-                            <router-link to="/team">Neues Mitglied</router-link>
+                            <router-link to="/team/join"
+                                >Team beitreten</router-link
+                            >
                         </li>
                     </ul>
                 </template>

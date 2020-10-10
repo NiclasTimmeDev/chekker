@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid table-wrapper">
+    <div class="container-fluid">
         <div v-if="auth.loading || team.loading">
             <full-page-spinner></full-page-spinner>
         </div>

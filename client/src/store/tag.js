@@ -21,10 +21,10 @@ export default {
          *
          * @param {object} state
          */
-        startLoading(state) {
+        startTagLoading(state) {
             state.loading = true;
         },
-        stopLoading(state) {
+        stopTagLoading(state) {
             state.loading = false;
         },
         /**
@@ -51,7 +51,7 @@ export default {
             state.tags = [...state.tags, tag];
             state.error = "";
         },
-        storeError(state, msg) {
+        storeTagError(state, msg) {
             state.loading = false;
             state.error = msg;
         }
@@ -76,13 +76,16 @@ export default {
                 const currentTeam = localStorageService.get("current_team");
                 // Check if fields exist.
                 if (!title || !background || !text) {
-                    commit("storeError", "Bitte füllen Sie alle Felder aus.");
+                    commit(
+                        "storeTagError",
+                        "Bitte füllen Sie alle Felder aus."
+                    );
                     return false;
                 }
 
                 // Check if a team is selected.
                 if (!currentTeam) {
-                    commit("storeError", "Sie müssen ein Team wählen.");
+                    commit("storeTagError", "Sie müssen ein Team wählen.");
                     return false;
                 }
 
@@ -100,7 +103,7 @@ export default {
                     return true;
                 }
             } catch (error) {
-                commit("storeError", error.response.data.error);
+                commit("storeTagError", error.response.data.error);
                 return false;
             }
         },
@@ -120,7 +123,7 @@ export default {
 
                 // Store all teams if response status is not 200.
                 if (res.status !== 200) {
-                    commit("storeError", error.response.data.error);
+                    commit("storeTagError", error.response.data.error);
                     return false;
                 }
 
@@ -128,7 +131,7 @@ export default {
                 commit("storeAllTags", res.data);
                 return true;
             } catch (error) {
-                commit("storeError", error.response.data.error);
+                commit("storeTagError", error.response.data.error);
                 return false;
             }
         }

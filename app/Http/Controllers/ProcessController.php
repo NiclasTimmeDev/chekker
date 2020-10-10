@@ -19,13 +19,42 @@ class ProcessController extends Controller
         $this->middleware('auth');
     }
     /**
-     * Display a listing of the resource.
+     * Get processes of one user.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($team_id)
     {
-        return Process::all();
+        try {
+            // Get current user.
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError("User nicht gefunden.", 404);
+            }
+
+            // Check if user is member of the team.
+            // $is_member = $user->teams($team_id)->exists();
+            // if (!$is_member) {
+            //     return ExceptionHelper::customSingleError('Sie sind nicht Mitglied des Team.', 401);
+            // }
+
+            // Get all proceses of the current team of the user.
+            $processes = $user->processes()->where("team_id", $team_id)->get();
+
+            // Get all tags for each process.
+            if (empty($processes)) {
+                return $processes;
+            }
+
+            // Get all tags for each process.
+            foreach ($processes as $process) {
+                $tags = $process->tags()->get();
+                $process['tags'] = $tags;
+            }
+            return $processes;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
     }
 
     /**
@@ -75,9 +104,10 @@ class ProcessController extends Controller
                 "permission" => $permission
             ]);
 
-
-
             $new_process->save();
+
+            // Create relation between user and process in pivot table.
+            $user->processes()->attach($new_process);
 
             // If tags are given, check if they belong to the team.
             $team = Team::find($team_id);
@@ -89,7 +119,7 @@ class ProcessController extends Controller
                         $tag_error = true;
                         exit;
                     }
-
+                    // Attach tag to process via pivot table.
                     $new_process->tags()->attach($tag);
                 }
 

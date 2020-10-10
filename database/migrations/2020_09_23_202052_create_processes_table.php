@@ -19,6 +19,9 @@ class CreateProcessesTable extends Migration
             // The title of the process.
             $table->string('title');
 
+            // The title of the process.
+            $table->text('description');
+
             // The creator of the process.
             $table->unsignedBigInteger('user_id')->nullable();
 

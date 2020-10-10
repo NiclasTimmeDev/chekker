@@ -8,7 +8,8 @@ export default {
     state: () => {
         return {
             loading: false,
-            processesOfUser: []
+            processesOfUser: [],
+            error: ""
         };
     },
     // ============================
@@ -20,7 +21,7 @@ export default {
          *
          * @param {object} state
          */
-        startLoading(state) {
+        startProcessLoading(state) {
             state.loading = true;
         },
         /**
@@ -34,6 +35,7 @@ export default {
         storeNewProcess(state, process) {
             state.loading = false;
             state.processesOfUser = [...state.processesOfUser, process];
+            state.error = "";
         },
         /**
          *
@@ -45,13 +47,27 @@ export default {
         storeAllProcesses(state, processes) {
             state.loading = false;
             state.processesOfUser = processes;
+            state.error = "";
+        },
+        storeProcessError(state, msg) {
+            state.loading = false;
+            state.error = msg;
         }
     },
     // ============================
     // ACTIONS
     // ============================
     actions: {
+        /**
+         * Create a new process.
+         *
+         * @param {object} commit
+         *   The commit object
+         * @param {object} form
+         *   The form object.
+         */
         async createProcess({ commit }, form) {
+            commit("startProcessLoading");
             try {
                 // Get params from form.
                 let {
@@ -82,11 +98,36 @@ export default {
                 });
 
                 // Store new team if request was successful.
-                if (res.status === 200) {
+                if (res.status === 201) {
                     commit("storeNewProcess", res.data);
+                    return true;
                 }
             } catch (error) {
-                console.log(error.response.data);
+                commit("storeProcessError", error.response.data.error);
+                return false;
+            }
+        },
+        async getAllProcessesOfUser({ commit }) {
+            try {
+                commit("startProcessLoading");
+                // Get current team. Return errof if none is chosen.
+                const currentTeam = localStorageService.get("current_team");
+                if (!currentTeam) {
+                    commit("storeProcessError", "Es ist kein Team ausgewählt.");
+                    return false;
+                }
+
+                // Make API request.
+                const res = await axios.get(`/api/process/${currentTeam}`);
+
+                // Store all processes if req was successful.
+                if (res.status === 200) {
+                    commit("storeAllProcesses", res.data);
+                    return true;
+                }
+            } catch (error) {
+                commit("storeProcessError", error.response.data.error);
+                return false;
             }
         }
     }

@@ -20,7 +20,7 @@ export default {
          *
          * @param {object} state
          */
-        startLoading(state) {
+        startUserLoading(state) {
             state.loading = true;
         },
         /**
@@ -47,7 +47,7 @@ export default {
          * @param {object} state
          * @param {object} payload
          */
-        generateErrorMsg(state, payload) {
+        storeUserError(state, payload) {
             state.loading = false;
             state.user = {};
             state.errors = payload.msg;
@@ -64,12 +64,11 @@ export default {
          */
         async loadUser({ commit }) {
             try {
-                commit("startLoading");
+                commit("startUserLoading");
                 await axios.get("/sanctum/csrf-cookie");
                 const res = await axios.get("/api/user");
                 if (res.status === 200) {
                     commit("loadUser", res.data);
-                } else {
                 }
             } catch (error) {
                 commit("loadUserError");
@@ -96,11 +95,11 @@ export default {
                 }
             } catch (error) {
                 if (error.response.status === 422) {
-                    commit("generateErrorMsg", {
+                    commit("storeUserError", {
                         msg: "Sorry, die Zugangsdaten sind nicht korrekt."
                     });
                 } else {
-                    commit("generateErrorMsg", {
+                    commit("storeUserError", {
                         msg: "Sorry, etwas ist schiefgelaufen."
                     });
                 }

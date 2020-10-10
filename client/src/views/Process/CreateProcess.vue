@@ -5,9 +5,14 @@
                 <h1>Neuer Prozess</h1>
             </div>
         </div>
-
         <div class="row justify-content-center">
             <div class="col-md-9 col-lg-8">
+                <!-- ALERT MESSAGE -->
+                <template v-if="process.error">
+                    <div class="alert alert-danger" role="alert">
+                        {{ process.error }}
+                    </div>
+                </template>
                 <form>
                     <!-- NAME -->
                     <div class="form-group">
@@ -218,7 +223,7 @@ export default {
     // COMPUTED
     // ============================
     computed: {
-        ...mapState(["team", "auth", "tag"]),
+        ...mapState(["team", "auth", "tag", "process"]),
         ...mapGetters(["getMembers", "getTags"])
     },
     // ============================
@@ -302,6 +307,9 @@ export default {
                 this.formErrors.permission = "";
             }
         },
+        /**
+         * Show and hide modal to add tags.
+         */
         toggleTagsModal() {
             this.getAllTags();
             this.showTagsModal = !this.showTagsModal;

@@ -23,7 +23,7 @@ export default {
          *
          * @param {object} state
          */
-        startLoading(state) {
+        startTeamLoading(state) {
             state.loading = true;
         },
         /**
@@ -90,7 +90,7 @@ export default {
          * @param {object} teams
          */
         async createTeam({ commit, dispatch }, team) {
-            commit("startLoading");
+            commit("startTeamLoading");
             try {
                 const { name } = team;
                 const res = await axios.post("/api/team", { name });
@@ -122,7 +122,7 @@ export default {
          *   The commit object.
          */
         async loadTeams({ commit }) {
-            // commit("startLoading");
+            commit("startTeamLoading");
             try {
                 const res = await axios.get("/api/team");
                 commit("loadAllTeams", res.data);
@@ -177,7 +177,7 @@ export default {
          * @return boolean.
          */
         async updateTeam({ commit }, newName) {
-            commit("startLoading");
+            commit("startTeamLoading");
             const currentTeam = localStorageService.get("current_team");
 
             try {
@@ -196,7 +196,7 @@ export default {
             }
         },
         async loadTeamMembers({ commit }) {
-            commit("startLoading");
+            commit("startTeamLoading");
             const currentTeam = localStorageService.get("current_team");
 
             try {

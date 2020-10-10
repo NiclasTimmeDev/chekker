@@ -11,6 +11,8 @@ import UpdateTeam from "./../views/Team/UpdateTeam.vue";
 import Team from "./../views/Team/Team.vue";
 // PROCESSES
 import CreateProcess from "./../views/Process/CreateProcess.vue";
+import ViewProcesses from "./../views/Process/ViewProcesses.vue";
+import ViewProcess from "./../views/Process/ViewProcess.vue";
 // TAG
 import CreateTag from "./../views/Tag/CreateTag.vue";
 
@@ -65,6 +67,16 @@ const routes = [
         path: "/process/create",
         name: "CreateProcess",
         component: CreateProcess
+    },
+    {
+        path: "/process/view",
+        name: "ViewProcesses",
+        component: ViewProcesses
+    },
+    {
+        path: "/process/:id",
+        name: "ViewProcess",
+        component: ViewProcess
     },
     /* ====================
     TAG
