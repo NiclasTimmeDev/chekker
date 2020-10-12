@@ -18,9 +18,12 @@ class ProcessController extends Controller
     {
         $this->middleware('auth');
     }
+
     /**
-     * Get processes of one user.
-     *
+     * Get all teams of the current team of the user.
+     * 
+     * @param string $team_id
+     *   The id of the team
      * @return \Illuminate\Http\Response
      */
     public function index($team_id)
@@ -31,12 +34,6 @@ class ProcessController extends Controller
             if (!$user) {
                 return ExceptionHelper::customSingleError("User nicht gefunden.", 404);
             }
-
-            // Check if user is member of the team.
-            // $is_member = $user->teams($team_id)->exists();
-            // if (!$is_member) {
-            //     return ExceptionHelper::customSingleError('Sie sind nicht Mitglied des Team.', 401);
-            // }
 
             // Get all proceses of the current team of the user.
             $processes = $user->processes()->where("team_id", $team_id)->get();
@@ -52,6 +49,43 @@ class ProcessController extends Controller
                 $process['tags'] = $tags;
             }
             return $processes;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
+    }
+
+    /**
+     * Get a single process and its related data.
+     * 
+     * @param string $process_id
+     *   The id of the process of interest
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function single($process_id)
+    {
+        try {
+            // Get current user
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError("User nicht gefunden.", 404);
+            }
+
+            // Check if user has permission to the process.
+            if (!$user->processes($process_id)->exists()) {
+                return ExceptionHelper::customSingleError('Sie haben keinen Zugriff auf diesen Prozess.', 401);
+            }
+
+            // Get the process.
+            $process = Process::find($process_id);
+            if (!$process) {
+                return ExceptionHelper::customSingleError('Prozess nicht gefunden.', 401);
+            }
+
+            // Get all related data of the process.
+            $process['related_data'] = $this->loadSingleProcessData($process);
+
+            return $process;
         } catch (Throwable $e) {
             return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
         }
@@ -192,5 +226,29 @@ class ProcessController extends Controller
     public function destroy(Process $process)
     {
         //
+    }
+
+    /**
+     * Get all data related to a process.
+     * This includes tags, tasks and involved people.
+     * 
+     * @param  \App\Process  $process
+     *   The process of interest.
+     * 
+     * @return array $results
+     *   All data related to the process.
+     */
+    private function loadSingleProcessData($process)
+    {
+        $results = [];
+
+        // Get tags.
+        $tags = $process->tags()->get();
+        $results['tags'] = $tags;
+
+        // TODO: Get tasks.
+        // TODO: Get Involved people.
+
+        return $results;
     }
 }

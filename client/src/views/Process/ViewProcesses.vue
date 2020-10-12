@@ -106,6 +106,7 @@ export default {
     // berforeMount
     // ============================
     beforeMount() {
+        console.log("btn-outline-da");
         this.getAllProcessesOfUser();
     },
     // ============================

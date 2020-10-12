@@ -18,19 +18,19 @@
                 </template>
                 <template v-slot:body>
                     <ul class="list-group">
-                        <li class="list-group-item">
+                        <li class="list-group-item" @click="toggleModal">
                             <router-link to="/team/create" class="text-primary"
                                 >Team</router-link
                             >
                         </li>
-                        <li class="list-group-item">
+                        <li @click="toggleModal" class="list-group-item">
                             <router-link
                                 to="/process/create"
                                 class="text-primary"
                                 >Prozess</router-link
                             >
                         </li>
-                        <li class="list-group-item">
+                        <li @click="toggleModal" class="list-group-item">
                             <router-link to="/tag/create" class="text-primary"
                                 >Tag</router-link
                             >

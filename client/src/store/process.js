@@ -9,6 +9,7 @@ export default {
         return {
             loading: false,
             processesOfUser: [],
+            singleProcess: {},
             error: ""
         };
     },
@@ -38,6 +39,18 @@ export default {
             state.error = "";
         },
         /**
+         * Store a single process.
+         *
+         * @param {object} state
+         *   The state object.
+         * @param {object} process
+         *   The new process.
+         */
+        storeSingleProcess(state, process) {
+            state.loading = false;
+            (state.singleProcess = process), (state.error = "");
+        },
+        /**
          *
          * @param {object} state
          *   The state object.
@@ -52,6 +65,8 @@ export default {
         storeProcessError(state, msg) {
             state.loading = false;
             state.error = msg;
+            state.processesOfUser = [];
+            state.singleProcess = {};
         }
     },
     // ============================
@@ -67,8 +82,8 @@ export default {
          *   The form object.
          */
         async createProcess({ commit }, form) {
-            commit("startProcessLoading");
             try {
+                commit("startProcessLoading");
                 // Get params from form.
                 let {
                     name,
@@ -100,13 +115,21 @@ export default {
                 // Store new team if request was successful.
                 if (res.status === 201) {
                     commit("storeNewProcess", res.data);
-                    return true;
+                    return res.data;
                 }
             } catch (error) {
                 commit("storeProcessError", error.response.data.error);
                 return false;
             }
         },
+        /**
+         * Get all processes of a user.
+         *
+         * @param {object} commit
+         *   The commit object.
+         *
+         * @return boolean
+         */
         async getAllProcessesOfUser({ commit }) {
             try {
                 commit("startProcessLoading");
@@ -118,11 +141,34 @@ export default {
                 }
 
                 // Make API request.
-                const res = await axios.get(`/api/process/${currentTeam}`);
-
+                const res = await axios.get(`/api/process/all/${currentTeam}`);
                 // Store all processes if req was successful.
                 if (res.status === 200) {
                     commit("storeAllProcesses", res.data);
+                    return true;
+                }
+            } catch (error) {
+                commit("storeProcessError", error.response.data.error);
+                return false;
+            }
+        },
+        /**
+         * Get a single process by id.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {string} processID
+         *   The id of the process of interest.
+         */
+        async getSingleProcess({ commit }, processID) {
+            try {
+                commit("startProcessLoading");
+                // Make api request.
+                const res = await axios.get(`/api/process/single/${processID}`);
+
+                // Store  process if request was successful.
+                if (res.status === 200) {
+                    commit("storeSingleProcess", res.data);
                     return true;
                 }
             } catch (error) {

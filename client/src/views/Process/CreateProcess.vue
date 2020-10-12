@@ -170,6 +170,12 @@
                                         ></Tag>
                                     </li>
                                 </ul>
+                                <button
+                                    @click="toggleTagsModal"
+                                    class="btn btn-outline-primary btn-sm mt-3"
+                                >
+                                    Fertig
+                                </button>
                             </template>
                         </Modal>
                     </div>
@@ -260,7 +266,10 @@ export default {
             }
 
             // Send req to api via vuex.
-            this.createProcess(this.form);
+            const newProcess = await this.createProcess(this.form);
+
+            // Navigate to new process overview page.
+            this.$router.push({ path: `/process/${newProcess.id}` });
         },
         /**
          * Check if all required values of the form are set.

@@ -11,10 +11,10 @@ import UpdateTeam from "./../views/Team/UpdateTeam.vue";
 import Team from "./../views/Team/Team.vue";
 // PROCESSES
 import CreateProcess from "./../views/Process/CreateProcess.vue";
-import ViewProcesses from "./../views/Process/ViewProcesses.vue";
-import ViewProcess from "./../views/Process/ViewProcess.vue";
 // TAG
 import CreateTag from "./../views/Tag/CreateTag.vue";
+// TASKS
+import CreateTask from "./../views/Task/CreateTask.vue";
 
 Vue.use(VueRouter);
 
@@ -68,16 +68,6 @@ const routes = [
         name: "CreateProcess",
         component: CreateProcess
     },
-    {
-        path: "/process/view",
-        name: "ViewProcesses",
-        component: ViewProcesses
-    },
-    {
-        path: "/process/:id",
-        name: "ViewProcess",
-        component: ViewProcess
-    },
     /* ====================
     TAG
     ==================== */
@@ -85,6 +75,14 @@ const routes = [
         path: "/tag/create",
         name: "CreateTag",
         component: CreateTag
+    },
+    /* ====================
+    TASKS
+    ==================== */
+    {
+        path: "/task/create",
+        name: "CreateTask",
+        component: CreateTask
     }
 ];
 
