@@ -18,7 +18,7 @@
 import { mapActions, mapState } from "vuex";
 import Navbar from "./components/shared/Navbar";
 import AdminSidebar from "./components/AdminSidebar/AdminSidebar";
-import FullPageSpinner from "./components/FullPageSpinner";
+import FullPageSpinner from "./components/UI/Spinners/FullPageSpinner.vue";
 
 export default {
     components: {

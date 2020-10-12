@@ -194,7 +194,7 @@
 </template>
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
-import FullPageSpinner from "./../../components/FullPageSpinner.vue";
+import FullPageSpinner from "./../../components/UI/Spinners/FullPageSpinner.vue";
 import Tag from "./../../components/Tag";
 import Accordion from "./../../components/UI/Accordion/Accordion";
 import AccordionItem from "./../../components/UI/Accordion/AccordionItem";

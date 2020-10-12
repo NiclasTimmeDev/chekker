@@ -37,12 +37,6 @@
                             {{ formErrors.description }}
                         </div>
                     </div>
-                    <!-- <div class="form-group">
-                        <label for="description">Beschreibung</label>
-                        <TipTapBasic
-                            :description="form.description"
-                        ></TipTapBasic>
-                    </div> -->
 
                     <!-- Involved persons -->
                     <div class="form-group">
@@ -58,7 +52,10 @@
                             />
                             <button
                                 class="btn btn-outline-secondary btn-sm btn-inline ml-3"
-                                @click.prevent="toggleTagModal"
+                                @click.prevent="
+                                    toggleTagModal();
+                                    showTeamMembers();
+                                "
                             >
                                 Person erstellen
                             </button>
@@ -75,6 +72,26 @@
                         tab1Title="Intern"
                         tab2Title="Extern"
                     >
+                        <template v-slot:title>Personen hinzufügen</template>
+                        <template v-slot:body1>
+                            <small-spinner v-if="team.loading"></small-spinner>
+                            <ul v-else class="list-group list-group-flush">
+                                <li
+                                    v-for="member in team.members"
+                                    :key="member.id"
+                                    class="list-group-item"
+                                >
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="member.id"
+                                        :id="member.id"
+                                        v-model="form.people"
+                                    />
+                                    <span>{{ member.name }}</span>
+                                </li>
+                            </ul>
+                        </template>
                     </TabModal>
                     <!-- SEND EMAIL BOOLEAN DECSISION -->
                     <div class="form-group">
@@ -113,7 +130,8 @@
 </template>
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
-import FullPageSpinner from "./../../components/FullPageSpinner.vue";
+import FullPageSpinner from "./../../components/UI/Spinners/FullPageSpinner.vue";
+import SmallSpinner from "./../../components/UI/Spinners/SmallSpinner.vue";
 import TipTapBasic from "./../../components/RichTextEditor/TipTapBasic.vue";
 import TabModal from "./../../components/UI/TabModal";
 export default {
@@ -139,9 +157,26 @@ export default {
             addPeople: false
         };
     },
+    // ============================
+    // COMPUTED
+    // ============================
+    computed: {
+        ...mapState(["team"])
+    },
     methods: {
+        ...mapActions(["loadTeamMembers"]),
         toggleTagModal() {
             this.addPeople = !this.addPeople;
+        },
+        /**
+         * Load all team members if necessary
+         */
+        showTeamMembers() {
+            // Return if they are already loaded.
+            if (this.team.members.length !== 0) {
+                return;
+            }
+            this.loadTeamMembers();
         }
     },
     // ============================
@@ -150,7 +185,8 @@ export default {
     components: {
         FullPageSpinner,
         TipTapBasic,
-        TabModal
+        TabModal,
+        SmallSpinner
     }
 };
 </script>
