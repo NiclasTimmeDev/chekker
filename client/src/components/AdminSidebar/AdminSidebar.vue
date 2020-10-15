@@ -4,10 +4,11 @@
         class="sidebar bg-darkest"
         :class="{ 'sidebar-big': sidebarBig, 'sidebar-small': !sidebarBig }"
     >
-        <div class="icon-toggle-sidebar px-3" @click="toggleSidebarWidth">
+        <div class="icon-toggle-sidebar px-3">
             <i
                 class="fas fa-angle-double-left"
                 :class="{ rotate: !sidebarBig }"
+                @click="toggleSidebarWidth"
             ></i>
         </div>
 
@@ -22,6 +23,7 @@
 
             <!-- SELECT TEAM -->
             <admin-team-display></admin-team-display>
+
             <!-- MODAL -->
             <create-new-modal :showModal="showModal" :toggleModal="toggleModal">
                 <template v-slot:title>
@@ -147,77 +149,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped>
-.sidebar-big {
-    width: 20vw;
-    max-width: 300px;
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar-small {
-    width: 50px;
-    transition: width 0.3s ease-in-out;
-
-    .sidebar-content {
-        opacity: 0;
-        transition: opacity 0.05s ease-in-out;
-    }
-}
-.sidebar {
-    height: 100vh;
-    position: sticky;
-    overflow: scroll;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    left: 0;
-    top: 0;
-    z-index: 101;
-
-    .icon-toggle-sidebar {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-
-        i {
-            color: white;
-            font-size: 1.5rem;
-            transition: 0.4s ease-in-out;
-            cursor: pointer;
-        }
-
-        i.rotate {
-            transform: rotate(180deg);
-        }
-    }
-
-    .sidebar-content {
-        width: 100%;
-        height: 100%;
-        transition: opacity 0.4s ease-in-out;
-
-        .btn {
-            margin-bottom: 30px;
-        }
-
-        ul {
-            list-style-type: none;
-
-            li {
-                a {
-                    color: #fff;
-                    font-size: 0.8rem;
-                    &:hover {
-                        text-decoration: none;
-                    }
-                }
-            }
-        }
-    }
-
-    .show-modal {
-        display: block;
-    }
-}
-</style>

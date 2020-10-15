@@ -39,32 +39,36 @@
                     </div>
 
                     <!-- Involved persons -->
-                    <div class="form-group">
+                    <div class="form-group involved-persons">
                         <label for="name">Involvierte Personen</label>
-                        <div class="inline-form-group">
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Geben Sie einen Namen ein"
-                                id="people"
-                                name="people"
-                                v-model="form.title"
-                            />
-                            <button
-                                class="btn btn-outline-secondary btn-sm btn-inline ml-3"
-                                @click.prevent="
-                                    toggleTagModal();
-                                    showTeamMembers();
-                                "
-                            >
-                                Person erstellen
-                            </button>
-                        </div>
+                        <button
+                            class="btn btn-outline-secondary btn-sm btn-inline"
+                            @click.prevent="
+                                toggleTagModal();
+                                showTeamMembers();
+                            "
+                        >
+                            Person Hinzufügen
+                        </button>
 
+                        <div class="form-check form-check-inline ml-3">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="send-email"
+                                value="1"
+                                name="send-email"
+                                v-model="form.sendEmail"
+                            />
+                            <label class="form-check-label" for="send-email"
+                                >Automatische Email versenden</label
+                            >
+                        </div>
                         <div class="invalid-feedback">
                             {{ formErrors.title }}
                         </div>
                     </div>
+
                     <!-- ADD PEOPLE MODAL -->
                     <TabModal
                         :showModal="addPeople"
@@ -94,21 +98,7 @@
                         </template>
                     </TabModal>
                     <!-- SEND EMAIL BOOLEAN DECSISION -->
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                id="send-email"
-                                value="1"
-                                name="send-email"
-                                v-model="form.sendEmail"
-                            />
-                            <label class="form-check-label" for="send-email"
-                                >Automatische Email versenden</label
-                            >
-                        </div>
-                    </div>
+                    <div class="form-group"></div>
                     <!-- EMAIL TEMPLATE -->
                     <div v-if="form.sendEmail" class="form-group">
                         <label for="description">E-Mail Template</label>
@@ -198,6 +188,12 @@ export default {
 
     button {
         flex-shrink: 0;
+    }
+}
+
+.involved-persons {
+    label {
+        display: block;
     }
 }
 </style>
