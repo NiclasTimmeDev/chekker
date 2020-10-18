@@ -1,19 +1,5 @@
-.sidebar-big {
-    width: 20vw;
-    max-width: 300px;
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar-small {
-    width: 50px;
-    transition: width 0.3s ease-in-out;
-
-    .sidebar-content {
-        opacity: 0;
-        transition: opacity 0.05s ease-in-out;
-    }
-}
 .sidebar {
+    width: 4rem;
     box-shadow: $box-shadow-default;
     height: 100vh;
     position: sticky;
@@ -23,6 +9,33 @@
     left: 0;
     top: 0;
     z-index: 101;
+
+    a {
+        color: theme-color("darkest");
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    .sidebar-icon {
+        background-color: $white;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        i.fas {
+            font-size: 20px;
+        }
+    }
+
+    .button-icon {
+        background-color: theme-color("primary");
+        color: $white;
+    }
 
     .icon-toggle-sidebar {
         width: 100%;
@@ -59,13 +72,6 @@
             list-style-type: none;
 
             li {
-                a {
-                    color: #fff;
-                    font-size: 0.8rem;
-                    &:hover {
-                        text-decoration: none;
-                    }
-                }
             }
         }
     }
