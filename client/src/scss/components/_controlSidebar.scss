@@ -1,0 +1,57 @@
+.control-sidebar--wrapper {
+    width: 162px;
+    overflow: hidden;
+    height: 100vh;
+    transition: 0.3s ease-in-out;
+}
+
+.control-sidebar--wrapper-hide {
+    width: 32px;
+    transition: 0.3s ease-in-out;
+    z-index: 101;
+}
+
+.control-sidebar {
+    width: 130px;
+    height: 100vh;
+    position: fixed;
+    transition: 0.3s ease-in-out;
+
+    top: 0;
+    background-color: $white;
+    box-shadow: $box-shadow-default;
+
+    .control-sidebar--toggle-icon {
+        position: absolute;
+        top: 0;
+        left: -32px;
+        width: 32px;
+        height: 34px;
+        background-color: $white;
+        // box-shadow: $box-shadow-default;
+        border-right: none;
+        border-top: 1px solid theme-color("grey");
+        border-left: 1px solid theme-color("grey");
+        border-bottom: 1px solid theme-color("grey");
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        i {
+            color: $font-size-base;
+            font-size: 25px;
+        }
+
+        i.rotate {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.control-sidebar--show {
+    right: 0;
+}
+.control-sidebar--hide {
+    right: -130px;
+}

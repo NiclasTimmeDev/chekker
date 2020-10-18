@@ -57,9 +57,7 @@
     </aside>
 </template>
 <script>
-import AdminControl from "./AdminControl.vue";
 import Modal from "./../UI/Modal";
-import AdminTeamDisplay from "./AdminTeamDisplay.vue";
 import AdminSidebarIcon from "./AdminSidebarIcon";
 export default {
     data() {
@@ -69,9 +67,7 @@ export default {
         };
     },
     components: {
-        "admin-control": AdminControl,
         "create-new-modal": Modal,
-        "admin-team-display": AdminTeamDisplay,
         AdminSidebarIcon: AdminSidebarIcon
     },
     methods: {

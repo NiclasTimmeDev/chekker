@@ -2,12 +2,18 @@
     display: flex;
     justify-content: space-between;
 
-    .management-sidebar {
-        width: 25vw;
-        max-width: 300px;
-        padding: $spacer * 1.5;
-        box-shadow: $box-shadow-default;
-        min-height: 100vh;
+    .management-sidebar--wrapper {
+        width: 40vw;
+        height: 100vh;
         overflow: hidden;
+        background-color: theme-color("grey");
+
+        .management-sidebar--content {
+            position: relative;
+            height: 100%;
+            right: -15px;
+            padding: $spacer;
+            overflow-y: scroll;
+        }
     }
 }
