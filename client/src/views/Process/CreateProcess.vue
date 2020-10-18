@@ -2,21 +2,39 @@
     <div class="with-management-sidebar">
         <!-- MANAGEMENT SIDEBAR -->
         <management-sidebar
-            ><template v-slot:content>
+            ><template #content>
                 <button class="btn btn-primary mb-3">Speichern</button>
                 <h2 class="mb-3">Teamname</h2>
                 <div class="draggable">
-                    <ManagementCard>
-                        <template v-slot:input>
-                            <input class="input-full" type="text" />
-                        </template>
-                    </ManagementCard>
-                </div> </template
-        ></management-sidebar>
+                    <draggable v-model="tasks" ghost-class="draggable--ghost">
+                        <transition-group>
+                            <!-- ONE CARD FOR EVERY TASK -->
+                            <ManagementCard
+                                v-for="task in tasks"
+                                :key="task.id"
+                                @onClick="changeCurrentTask(task.id)"
+                            >
+                                <template #input>
+                                    <input
+                                        class="input-full"
+                                        type="text"
+                                        v-model="task.title"
+                                    />
+                                </template>
+                            </ManagementCard>
+                        </transition-group>
+                    </draggable>
+                </div>
+
+                <button class="btn btn-link" @click="addTask">
+                    Neuer Task
+                </button></template
+            ></management-sidebar
+        >
         <div class="with-sidebar-content">
             <div class="row justify-content-center">
                 <div class="col-md-9 col-lg-8">
-                    <h1>Neuer Prozess</h1>
+                    <h1>{{ tasks[currentTask].title }}</h1>
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -223,12 +241,14 @@ import Modal from "./../../components/UI/Modal.vue";
 import ManagementSidebar from "./../../components/ManagementSidebar/ManagementSidebar.vue";
 import ControlSidebar from "./../../components/UI/ControlSidebar/ControlSidebar.vue";
 import ManagementCard from "./../../components/ManagementSidebar/ManagementCard.vue";
+import draggable from "vuedraggable";
 export default {
     // ============================
     // DATA
     // ============================
     data() {
         return {
+            currentTask: 0,
             form: {
                 name: "",
                 description: "",
@@ -246,7 +266,14 @@ export default {
                 color: "",
                 name: ""
             },
-            showTagsModal: false
+            showTagsModal: false,
+            tasks: [
+                {
+                    title: "Title",
+                    id: 0,
+                    steps: []
+                }
+            ]
         };
     },
     // ============================
@@ -275,6 +302,29 @@ export default {
     // ============================
     methods: {
         ...mapActions(["loadTeamMembers", "createProcess", "getAllTags"]),
+        /**
+         * Add a new task to the list.
+         * The id makes it idenfiable
+         * so that the right data can be displayed
+         * on the canvas.
+         */
+        addTask() {
+            this.tasks.push({
+                title: "",
+                steps: [],
+                id: this.tasks.length
+            });
+        },
+        /**
+         * Change the task the user is currently working on.
+         *
+         * @param {number} id
+         *   The id of the current task.
+         */
+        changeCurrentTask(id) {
+            console.log(id);
+            this.currentTask = id;
+        },
         /**
          * Submit the form.
          */
@@ -380,7 +430,8 @@ export default {
         Modal: Modal,
         ManagementSidebar: ManagementSidebar,
         ControlSidebar: ControlSidebar,
-        ManagementCard: ManagementCard
+        ManagementCard: ManagementCard,
+        draggable: draggable
     }
 };
 </script>
