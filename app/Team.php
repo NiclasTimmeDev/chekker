@@ -20,4 +20,10 @@ class Team extends Model
     {
         return $this->hasMany('App\Tag');
     }
+
+    // One to many relation with external persons.
+    public function externalPersons()
+    {
+        return $this->hasMany('App\ExternalPerson');
+    }
 }

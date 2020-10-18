@@ -11,6 +11,9 @@
 // Fonts.
 @import "./fonts";
 
+// Layout, e.g., grid system adaptions
+@import "./_layout.scss";
+
 // Components.
 @import "./components/_adminSidebar.scss";
 @import "./components/_headers.scss";
@@ -20,3 +23,4 @@
 @import "./components/_modal.scss";
 @import "./components/_accordion.scss";
 @import "./components/_table.scss";
+@import "./components/_managementSidebar.scss";

@@ -49,3 +49,11 @@ Route::get('process/single/{process_id}', "ProcessController@single");
 Route::get('tag/{team_id}', 'TagController@index');
 // Create a new tag.
 Route::post('tag', 'TagController@store');
+
+//===============
+// External Persons
+//===============
+// Get all external persons of one team.
+Route::get('external_person/{team_id}', 'ExternalPersonController@index');
+// Create new external person.
+Route::post('external_person', 'ExternalPersonController@store');

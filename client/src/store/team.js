@@ -1,5 +1,6 @@
 import axios from "axios";
 import localStorageService from "./../services/localStorageService";
+import validator from "validator";
 
 export default {
     // ============================
@@ -11,7 +12,12 @@ export default {
             members: [],
             membersLoaded: false,
             loading: false,
-            errors: ""
+            errors: "",
+            externalPersons: {
+                loading: false,
+                persons: [],
+                error: ""
+            }
         };
     },
     // ============================
@@ -77,6 +83,27 @@ export default {
             state.membersLoaded = false;
             members = [];
             state.errors = error;
+        },
+        startLoadingExternalPerson(state) {
+            state.externalPersons.loading = false;
+        },
+        storeExternalPersons(state, externalPersons) {
+            state.externalPersons.loading = false;
+            state.externalPersons.error = "";
+            state.externalPersons.persons = externalPersons;
+        },
+        storeSinglePerson(state, externalPerson) {
+            state.externalPersons.loading = false;
+            state.externalPersons.error = "";
+            state.externalPersons.persons = {
+                ...state.externalPersons.persons,
+                externalPerson
+            };
+        },
+        storeExternalPersonsError(state, msg) {
+            state.externalPersons.loading = false;
+            state.externalPersons.error = msg;
+            state.externalPersons.persons = [];
         }
     },
     // ============================
@@ -195,6 +222,100 @@ export default {
                 return false;
             }
         },
+        /**
+         * Load all external persons of the current team.
+         *
+         * @param {object} commit
+         *   The commit object.
+         *
+         * @return {object || Boolean}
+         *   New person if successful. Else false.
+         */
+        async loadAllExternalPersons({ commit }) {
+            try {
+                const currentTeam = localStorageService.get("current_team");
+                if (!currentTeam) {
+                    commit(
+                        "storeExternalPersonsError",
+                        "Kein Team ausgewählt."
+                    );
+                    return false;
+                }
+
+                // Make api request.
+                const res = await axios.get(
+                    `/api/external_person/${currentTeam}`
+                );
+                console.log(res.status);
+                if (res.status === 200) {
+                    commit("storeExternalPersons", res.data);
+                    return true;
+                }
+            } catch (error) {
+                console.log(error);
+                commit("storeExternalPersonsError", error.response.data.error);
+                return false;
+            }
+        },
+        /**
+         * Create a new external person.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {object} person
+         *   The person that shall be created.
+         *
+         * @return {object || Boolean}
+         *   New person if successful. Else false.
+         */
+        async createExternalPerson({ commit }, person) {
+            commit("startLoadingExternalPerson");
+            try {
+                // Check if all data is sufficient.
+                const { name, email, organization } = person;
+                if (!name || !validator.isEmail(email)) {
+                    commit(
+                        "storeExternalPersonsError",
+                        "Bitte geben Sie alle Felder korrekt ein."
+                    );
+                    return false;
+                }
+
+                // Get the current team.
+                const currentTeam = localStorageService.get("current_team");
+                if (!currentTeam) {
+                    commit(
+                        "storeExternalPersonsError",
+                        "Es ist kein Team ausgewählt."
+                    );
+                    return false;
+                }
+
+                // Make api request.
+                const res = await axios.post("/api/external_person", {
+                    ...person,
+                    team_id: currentTeam
+                });
+
+                // Store new person if request was successful.
+                if (res.status === 201) {
+                    commit("storeSinglePerson", res.data);
+                    return res.data;
+                }
+            } catch (error) {
+                console.log(error);
+                commit("storeExternalPersonsError", error.response.data.error);
+                return false;
+            }
+        },
+        /**
+         * Load all members of the current team.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @return {Boolean}
+         *  True if api call was successful.
+         */
         async loadTeamMembers({ commit }) {
             commit("startTeamLoading");
             const currentTeam = localStorageService.get("current_team");

@@ -1,7 +1,8 @@
 <template>
-    <div class="card">
-        <div @click="toggleShow" class="card-header" id="headingOne">
-            <h5 class="mb-0">
+    <div class="card mt-2">
+        <div @click="toggleShow" class="card-header " id="headingOne">
+            <div class="mb-0">
+                <!-- TITLE SLOT -->
                 <slot name="title"></slot>
                 <span class="chevron-icon"
                     ><i
@@ -9,17 +10,17 @@
                         :class="[{ 'chevron-icon-active': show }]"
                     ></i
                 ></span>
-            </h5>
+            </div>
         </div>
 
         <div
-            id="collapseOne"
             class="collapse"
             :class="{ show: show }"
             aria-labelledby="headingOne"
             data-parent="#accordion"
         >
             <div class="card-body">
+                <!-- CONTENT SLOT -->
                 <slot name="content"></slot>
             </div>
         </div>

@@ -1,0 +1,13 @@
+.with-management-sidebar {
+    display: flex;
+    justify-content: space-between;
+
+    .management-sidebar {
+        width: 25vw;
+        max-width: 300px;
+        padding: $spacer * 1.5;
+        box-shadow: $box-shadow-default;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+}

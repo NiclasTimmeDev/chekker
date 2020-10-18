@@ -228,6 +228,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         // Custom
         'ExceptionHelper' => App\Helpers\ExceptionHelper::class,
+        'UserHelper' => App\Helpers\UserHelper::class,
 
     ],
 
