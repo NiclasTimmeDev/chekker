@@ -1,4 +1,25 @@
 .card {
     border: none;
     box-shadow: $box-shadow-default;
+    padding: 0.5rem;
+}
+
+.management-card {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: move;
+    flex-direction: row;
+
+    span {
+        display: inline-block;
+
+        i {
+            font-size: 20px;
+        }
+    }
+
+    div {
+        font-size: $font-size-lg;
+    }
 }

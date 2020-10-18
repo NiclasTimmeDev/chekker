@@ -1,12 +1,18 @@
 <template>
     <div class="with-management-sidebar">
+        <!-- MANAGEMENT SIDEBAR -->
         <management-sidebar
             ><template v-slot:content>
-                <div>
-                    Hello
-                </div>
-            </template></management-sidebar
-        >
+                <button class="btn btn-primary mb-3">Speichern</button>
+                <h2 class="mb-3">Teamname</h2>
+                <div class="draggable">
+                    <ManagementCard>
+                        <template v-slot:input>
+                            <input class="input-full" type="text" />
+                        </template>
+                    </ManagementCard>
+                </div> </template
+        ></management-sidebar>
         <div class="with-sidebar-content">
             <div class="row justify-content-center">
                 <div class="col-md-9 col-lg-8">
@@ -216,6 +222,7 @@ import AccordionItem from "./../../components/UI/Accordion/AccordionItem";
 import Modal from "./../../components/UI/Modal.vue";
 import ManagementSidebar from "./../../components/ManagementSidebar/ManagementSidebar.vue";
 import ControlSidebar from "./../../components/UI/ControlSidebar/ControlSidebar.vue";
+import ManagementCard from "./../../components/ManagementSidebar/ManagementCard.vue";
 export default {
     // ============================
     // DATA
@@ -372,7 +379,8 @@ export default {
         AccordionItem: AccordionItem,
         Modal: Modal,
         ManagementSidebar: ManagementSidebar,
-        ControlSidebar: ControlSidebar
+        ControlSidebar: ControlSidebar,
+        ManagementCard: ManagementCard
     }
 };
 </script>
