@@ -49,3 +49,42 @@
         opacity: 1;
     }
 }
+
+.relative-modal--wrapper {
+    position: relative;
+
+    .relative-modal--modal {
+        position: absolute;
+        z-index: 2000;
+        background-color: $white;
+        top: 40px;
+        left: 0;
+        width: 200px;
+        height: 250px;
+        overflow: hidden;
+        display: flex;
+        flex-flow: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        box-shadow: $box-shadow-default;
+        border-radius: $border-radius;
+        border: 1px solid theme-color("grey");
+
+        .close-icon {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            cursor: pointer;
+            z-index: 2001;
+            padding: 5px;
+            background-color: $white;
+        }
+
+        .relative-modal--content {
+            overflow-y: scroll;
+            width: 115%;
+            padding-right: 15%;
+            position: relative;
+        }
+    }
+}

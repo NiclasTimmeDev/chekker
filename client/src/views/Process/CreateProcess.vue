@@ -5,13 +5,57 @@
             ><template #content>
                 <button class="btn btn-primary mb-3">Speichern</button>
                 <h2 class="mb-3">Teamname</h2>
+                <!-- MODAL ACTIONS -->
+                <div class="row-full">
+                    <div class="col col-lg-6">
+                        <RelativeModal>
+                            <template #button>
+                                <TransparentWithIconButton
+                                    :icon="'fas fa-lock'"
+                                    text="Rechte"
+                                />
+                            </template>
+                            <template #modalContent>
+                                <div>
+                                    wegwegew wegwegweg ewgweg we wegwegew
+                                    wegwegweg ewgweg we wegwegew wegwegweg
+                                    ewgweg we wegwegew wegwegweg ewgweg we
+                                    wegwegew wegwegweg ewgweg we wegwegew
+                                    wegwegweg ewgweg we wegwegew wegwegweg
+                                    ewgweg we
+                                </div>
+                            </template>
+                        </RelativeModal>
+                    </div>
+                    <div class="col col-lg-6">
+                        <RelativeModal>
+                            <template #button>
+                                <TransparentWithIconButton
+                                    :icon="'fas fa-clock'"
+                                    text="Wiederholung"
+                                />
+                            </template>
+                            <template #modalContent>
+                                <div>
+                                    wegwegew wegwegweg ewgweg we wegwegew
+                                    wegwegweg ewgweg we wegwegew wegwegweg
+                                    ewgweg we wegwegew wegwegweg ewgweg we
+                                    wegwegew wegwegweg ewgweg we wegwegew
+                                    wegwegweg ewgweg we wegwegew wegwegweg
+                                    ewgweg we
+                                </div>
+                            </template>
+                        </RelativeModal>
+                    </div>
+                </div>
+
                 <div class="draggable">
                     <draggable v-model="tasks" ghost-class="draggable--ghost">
                         <transition-group>
                             <!-- ONE CARD FOR EVERY TASK -->
                             <ManagementCard
-                                v-for="task in tasks"
-                                :key="task.id"
+                                v-for="(task, index) in tasks"
+                                :key="index"
                                 @onClick="changeCurrentTask(task.id)"
                             >
                                 <template #input>
@@ -37,196 +81,50 @@
                     <h1>{{ tasks[currentTask].title }}</h1>
                 </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-md-9 col-lg-8">
-                    <!-- ALERT MESSAGE -->
-                    <template v-if="process.error">
-                        <div class="alert alert-danger" role="alert">
-                            {{ process.error }}
-                        </div>
-                    </template>
-                    <form>
-                        <!-- NAME -->
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Der Name des neuen Prozesses"
-                                id="name"
-                                name="name"
-                                v-model="form.name"
-                            />
-                            <div class="invalid-feedback">
-                                {{ formErrors.name }}
-                            </div>
-                        </div>
-                        <!-- DESCRIPTION -->
-                        <div class="form-group">
-                            <label for="description">Beschreibung</label>
-                            <textarea
-                                class="form-control"
-                                id="description"
-                                rows="3"
-                                name="description"
-                                v-model="form.description"
-                            ></textarea>
-                            <div class="invalid-feedback">
-                                {{ formErrors.description }}
-                            </div>
-                        </div>
-                        <!-- PERMISSIONS -->
-                        <label>Rechte</label>
-                        <div class="text-muted mb-2">
-                            Wer soll den Prozess sehen, starten und in das
-                            eigene Prozess-Portfolio kopieren können?
-                        </div>
-                        <div class="form-group">
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    id="only-me"
-                                    value="only-me"
-                                    name="permissions"
-                                    v-model="form.permission"
-                                />
-                                <label class="form-check-label" for="only-me"
-                                    >Nur ich</label
-                                >
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    id="team"
-                                    value="team"
-                                    name="permissions"
-                                    v-model="form.permission"
-                                />
-                                <label class="form-check-label" for="team"
-                                    >Mein Team</label
-                                >
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input
-                                    class="form-check-input"
-                                    type="radio"
-                                    id="Erweitert"
-                                    value="advanced"
-                                    name="permissions"
-                                    v-model="form.permission"
-                                />
-                                <label class="form-check-label" for="Erweitert"
-                                    >Erweitert</label
-                                >
-                            </div>
-                        </div>
-                        <!-- SHOW TEAM MEMBERS FOR ADVANCED SETTINGS -->
-                        <div
-                            class="form-group"
-                            v-if="form.permission === 'advanced'"
+            <!-- CANVAS -->
+            <Canvas>
+                <template #content>
+                    <div class="draggable">
+                        <draggable
+                            class="dragArea list-group"
+                            :list="tasks[currentTask].steps"
+                            group="widgets"
                         >
-                            <full-page-spinner
-                                v-if="!team.membersLoaded"
-                            ></full-page-spinner>
-                            <template v-else>
-                                <div class="form-group">
-                                    <label>
-                                        Wählen Sie die Mitglieder aus, die
-                                        Zugriff haben sollen.
-                                    </label>
-                                    <div
-                                        class="form-check"
-                                        v-for="member in teamMembers"
-                                        :key="member.id"
-                                    >
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            :value="member.id"
-                                            :id="member.id"
-                                            v-model="form.allowedMembers"
-                                        />
-                                        <label
-                                            class="form-check-label"
-                                            for="member.id"
-                                        >
-                                            {{ member.name }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                        <div class="invalid-feedback">
-                            {{ formErrors.permission }}
-                        </div>
-                        <!-- TAGS -->
-                        <div class="form-group">
-                            <button
-                                class="btn btn-outline-primary btn-sm"
-                                @click.prevent="toggleTagsModal"
+                            <div
+                                class="list-group-item"
+                                v-for="(step, index) in tasks[currentTask]
+                                    .steps"
+                                :key="index"
                             >
-                                Tags hinzufügen
-                            </button>
-                            <!-- TAGS MODAL -->
-                            <Modal
-                                :showModal="showTagsModal"
-                                :toggleModal="toggleTagsModal"
-                                :limitHeight="true"
-                            >
-                                <template v-slot:title>
-                                    <h4>Fügen Sie Tags hinzu</h4>
-                                </template>
-                                <template v-slot:body>
-                                    <ul
-                                        class="list-group list-group-flush"
-                                        v-if="!tag.loading"
-                                    >
-                                        <li
-                                            v-for="tag in tag.tags"
-                                            :key="tag.id"
-                                            class="list-group-item"
-                                        >
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                :value="tag.id"
-                                                :id="tag.id"
-                                                v-model="form.tags"
-                                            />
-                                            <Tag
-                                                :title="tag.title"
-                                                :background="tag.background"
-                                                :text="tag.text"
-                                            ></Tag>
-                                        </li>
-                                    </ul>
-                                    <button
-                                        @click="toggleTagsModal"
-                                        class="btn btn-outline-primary btn-sm mt-3"
-                                    >
-                                        Fertig
-                                    </button>
-                                </template>
-                            </Modal>
-                        </div>
-
-                        <!-- SUBMIT -->
-                        <button
-                            class="btn btn-primary mt-4"
-                            @click.prevent="submit"
-                        >
-                            Prozess erstellen
-                        </button>
-                    </form>
-                </div>
-            </div>
+                                {{ step.label }}
+                            </div>
+                        </draggable>
+                    </div>
+                </template>
+            </Canvas>
         </div>
         <!-- CONTROL SIDEBAR -->
         <ControlSidebar>
             <template v-slot:content>
                 <div>Einfügen</div>
+                <div class="draggable">
+                    <draggable
+                        :list="clonableWidgets"
+                        ghost-class="draggable--ghost"
+                        :clone="clone"
+                        :group="{ name: 'widgets', pull: 'clone', put: false }"
+                    >
+                        <transition-group>
+                            <!-- ONE CARD FOR EVERY TASK -->
+                            <clonable-widget
+                                v-for="(widget, index) in clonableWidgets"
+                                :key="index"
+                                :icon="widget.icon"
+                                :text="widget.label"
+                            />
+                        </transition-group>
+                    </draggable>
+                </div>
             </template>
         </ControlSidebar>
     </div>
@@ -235,13 +133,15 @@
 import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "./../../components/UI/Spinners/FullPageSpinner.vue";
 import Tag from "./../../components/Tag";
-import Accordion from "./../../components/UI/Accordion/Accordion";
-import AccordionItem from "./../../components/UI/Accordion/AccordionItem";
 import Modal from "./../../components/UI/Modal.vue";
 import ManagementSidebar from "./../../components/ManagementSidebar/ManagementSidebar.vue";
 import ControlSidebar from "./../../components/UI/ControlSidebar/ControlSidebar.vue";
 import ManagementCard from "./../../components/ManagementSidebar/ManagementCard.vue";
+import TransparentWithIconButton from "./../../components/UI/Buttons/TransparentWithIconButton.vue";
+import RelativeModal from "./../../components/UI/Modals/RelativeModal.vue";
 import draggable from "vuedraggable";
+import Canvas from "./../../components/Process/Canvas.vue";
+import ClonableWidget from "./../../components/Process/ClonableWidget.vue";
 export default {
     // ============================
     // DATA
@@ -270,8 +170,34 @@ export default {
             tasks: [
                 {
                     title: "Title",
-                    id: 0,
+                    widgetType: "text",
                     steps: []
+                }
+            ],
+            clonableWidgets: [
+                {
+                    icon: "fas fa-text-width",
+                    label: "Text",
+                    type: "text",
+                    id: 0
+                },
+                {
+                    icon: "fas fa-list",
+                    label: "Checkliste",
+                    id: 1,
+                    type: "checklist"
+                },
+                {
+                    icon: "fas fa-image",
+                    label: "Bild",
+                    type: "image",
+                    id: 2
+                },
+                {
+                    icon: "fas fa-paper-plane",
+                    label: "E-Mail",
+                    type: "email",
+                    id: 3
                 }
             ]
         };
@@ -322,7 +248,6 @@ export default {
          *   The id of the current task.
          */
         changeCurrentTask(id) {
-            console.log(id);
             this.currentTask = id;
         },
         /**
@@ -391,6 +316,30 @@ export default {
             }
         },
         /**
+         * Clone a widget. This function is called
+         * when a widget from the ControlSidebar is dragged.
+         * It will return a new tasks object. This will be appended
+         * to the tasks array.
+         *
+         * @param {object} id
+         *   The id of the cloned widget.
+         *
+         * @return object
+         *   The object that will be appended to the tasks array.
+         */
+        clone({ id }) {
+            // Get the widget object that shall be cloned.
+            const widget = this.clonableWidgets.filter(widget => {
+                return widget.id == id;
+            })[0];
+
+            // Create new object with same schema as the other tasks.
+            return {
+                label: widget.label,
+                widgetType: widget.type
+            };
+        },
+        /**
          * Show and hide modal to add tags.
          */
         toggleTagsModal() {
@@ -423,15 +372,17 @@ export default {
     // COMPONENTS
     // ============================
     components: {
-        "full-page-spinner": FullPageSpinner,
-        Tag: Tag,
-        Accordion: Accordion,
-        AccordionItem: AccordionItem,
-        Modal: Modal,
-        ManagementSidebar: ManagementSidebar,
-        ControlSidebar: ControlSidebar,
-        ManagementCard: ManagementCard,
-        draggable: draggable
+        FullPageSpinner,
+        Tag,
+        Modal,
+        ManagementSidebar,
+        ControlSidebar,
+        ManagementCard,
+        draggable,
+        TransparentWithIconButton,
+        RelativeModal,
+        Canvas,
+        ClonableWidget
     }
 };
 </script>

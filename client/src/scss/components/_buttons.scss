@@ -5,3 +5,15 @@
 .btn-primary {
     color: #fff;
 }
+
+.btn-transparent {
+    &:focus {
+        outline: none !important;
+    }
+}
+
+.flex-button {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
