@@ -62,7 +62,7 @@
                                     <input
                                         class="input-full"
                                         type="text"
-                                        v-model="task.title"
+                                        v-model="task.label"
                                     />
                                 </template>
                             </ManagementCard>
@@ -78,28 +78,32 @@
         <div class="with-sidebar-content">
             <div class="row justify-content-center">
                 <div class="col-md-9 col-lg-8">
-                    <h1>{{ tasks[currentTask].title }}</h1>
+                    <h1>{{ tasks[currentTask].label }}</h1>
                 </div>
             </div>
             <!-- CANVAS -->
             <Canvas>
                 <template #content>
-                    <div class="draggable">
-                        <draggable
-                            class="dragArea list-group"
-                            :list="tasks[currentTask].steps"
-                            group="widgets"
+                    <p
+                        class="text-center"
+                        v-if="tasks[currentTask].steps.length === 0"
+                    >
+                        Ziehen Sie ein Widget von der rechten Seite des
+                        Bildschirms hier her.
+                    </p>
+                    <draggable
+                        class="drag-area"
+                        :list="tasks[currentTask].steps"
+                        group="widgets"
+                    >
+                        <div
+                            class="list-group-item"
+                            v-for="(step, index) in tasks[currentTask].steps"
+                            :key="index"
                         >
-                            <div
-                                class="list-group-item"
-                                v-for="(step, index) in tasks[currentTask]
-                                    .steps"
-                                :key="index"
-                            >
-                                {{ step.label }}
-                            </div>
-                        </draggable>
-                    </div>
+                            {{ step.label }}
+                        </div>
+                    </draggable>
                 </template>
             </Canvas>
         </div>
@@ -113,6 +117,7 @@
                         ghost-class="draggable--ghost"
                         :clone="clone"
                         :group="{ name: 'widgets', pull: 'clone', put: false }"
+                        :sort="false"
                     >
                         <transition-group>
                             <!-- ONE CARD FOR EVERY TASK -->
@@ -169,8 +174,9 @@ export default {
             showTagsModal: false,
             tasks: [
                 {
-                    title: "Title",
+                    label: "Title",
                     widgetType: "text",
+                    id: 0,
                     steps: []
                 }
             ],
@@ -236,9 +242,9 @@ export default {
          */
         addTask() {
             this.tasks.push({
-                title: "",
-                steps: [],
-                id: this.tasks.length
+                label: "",
+                id: this.tasks.length,
+                steps: []
             });
         },
         /**
