@@ -7,3 +7,21 @@
         outline: none;
     }
 }
+
+.invalid-feedback {
+    display: block;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center;
+    input {
+        margin-top: 0;
+    }
+}
+
+.custom-file {
+    width: 50%;
+    display: block;
+    margin: auto;
+}

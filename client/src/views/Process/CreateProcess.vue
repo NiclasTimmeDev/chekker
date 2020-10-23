@@ -97,11 +97,47 @@
                         group="widgets"
                     >
                         <div
-                            class="list-group-item"
+                            class="form-group"
                             v-for="(step, index) in tasks[currentTask].steps"
                             :key="index"
                         >
-                            {{ step.label }}
+                            <!-- TEXT WIDGET -->
+                            <div
+                                class="editor inline-editor"
+                                v-if="step.widgetType === 'text'"
+                            >
+                                <ckeditor
+                                    v-model="step.value"
+                                    :config="editorConfig"
+                                    :editor="editor"
+                                ></ckeditor>
+                            </div>
+
+                            <!-- IMAGE WIDGET -->
+                            <div
+                                class="custom-file"
+                                v-if="step.widgetType === 'image'"
+                            >
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    @change="changeImage($event, index)"
+                                    :id="index + 'file'"
+                                    :name="index + 'file'"
+                                    class="custom-file-input"
+                                />
+                                <label
+                                    class="custom-file-label"
+                                    :for="index + 'file'"
+                                >
+                                    <template v-if="step.value">
+                                        Bild ändern..
+                                    </template>
+                                    <template v-else>
+                                        Bild wählen...
+                                    </template>
+                                </label>
+                            </div>
                         </div>
                     </draggable>
                 </template>
@@ -146,7 +182,10 @@ import TransparentWithIconButton from "./../../components/UI/Buttons/Transparent
 import RelativeModal from "./../../components/UI/Modals/RelativeModal.vue";
 import draggable from "vuedraggable";
 import Canvas from "./../../components/Process/Canvas.vue";
-import ClonableWidget from "./../../components/Process/ClonableWidget.vue";
+import ClonableWidget from "./../../components/Widgets/ClonableWidget.vue";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import InlineEditor from "@ckeditor/ckeditor5-build-inline";
+
 export default {
     // ============================
     // DATA
@@ -205,7 +244,11 @@ export default {
                     type: "email",
                     id: 3
                 }
-            ]
+            ],
+            editorConfig: {
+                // The configuration of the editor.
+            },
+            editor: InlineEditor
         };
     },
     // ============================
@@ -339,10 +382,24 @@ export default {
                 return widget.id == id;
             })[0];
 
+            // Create default value depending on widget type
+            let value = "";
+            switch (widget.type) {
+                case "text":
+                    value = "<p>Schreiben Sie etwas...</p>";
+                    break;
+                case "image":
+                    value = "";
+                    break;
+                default:
+                    "";
+            }
             // Create new object with same schema as the other tasks.
             return {
+                id: this.tasks[this.currentTask].steps.length,
                 label: widget.label,
-                widgetType: widget.type
+                widgetType: widget.type,
+                value: value
             };
         },
         /**
@@ -351,6 +408,19 @@ export default {
         toggleTagsModal() {
             this.getAllTags();
             this.showTagsModal = !this.showTagsModal;
+        },
+        /**
+         * Append image form data.
+         *
+         * @param event
+         *   The event object
+         * @param index
+         *   The index of the step of the current task.
+         */
+        changeImage(event, index) {
+            let data = new FormData();
+            data.append("file", event.target.files[0]);
+            this.tasks[this.currentTask].steps[index].value = data;
         }
     },
     // ============================
@@ -388,21 +458,8 @@ export default {
         TransparentWithIconButton,
         RelativeModal,
         Canvas,
-        ClonableWidget
+        ClonableWidget,
+        ckeditor: CKEditor.component
     }
 };
 </script>
-
-<style lang="scss" scoped>
-.invalid-feedback {
-    display: block;
-}
-
-.list-group-item {
-    display: flex;
-    align-items: center;
-    input {
-        margin-top: 0;
-    }
-}
-</style>
