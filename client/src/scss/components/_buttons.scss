@@ -6,7 +6,8 @@
     color: #fff;
 }
 
-.btn-transparent {
+.btn-transparent,
+.btn-link {
     &:focus {
         outline: none !important;
     }

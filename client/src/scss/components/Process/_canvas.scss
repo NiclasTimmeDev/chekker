@@ -2,4 +2,21 @@
     width: 100%;
     min-height: 100vh;
     overflow-y: auto;
+
+    .canvas--widget-wrapper {
+        width: 100%;
+        border-radius: $border-radius;
+        cursor: move;
+
+        &:hover,
+        &:active {
+            box-shadow: $box-shadow-default;
+        }
+
+        .canvas--widget-item {
+            display: block;
+            max-width: 70%;
+            margin: auto;
+        }
+    }
 }

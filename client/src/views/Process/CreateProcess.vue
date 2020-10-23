@@ -4,7 +4,13 @@
         <management-sidebar
             ><template #content>
                 <button class="btn btn-primary mb-3">Speichern</button>
-                <h2 class="mb-3">Teamname</h2>
+                <h4 class="mb-3">
+                    <input
+                        type="text"
+                        v-model="processName"
+                        class="input-full"
+                    />
+                </h4>
                 <!-- MODAL ACTIONS -->
                 <div class="row-full">
                     <div class="col col-lg-6">
@@ -97,46 +103,66 @@
                         group="widgets"
                     >
                         <div
-                            class="form-group"
+                            class="form-group canvas--widget-wrapper py-3 px-2"
                             v-for="(step, index) in tasks[currentTask].steps"
                             :key="index"
                         >
-                            <!-- TEXT WIDGET -->
-                            <div
-                                class="editor inline-editor"
-                                v-if="step.widgetType === 'text'"
-                            >
-                                <ckeditor
-                                    v-model="step.value"
-                                    :config="editorConfig"
-                                    :editor="editor"
-                                ></ckeditor>
-                            </div>
-
-                            <!-- IMAGE WIDGET -->
-                            <div
-                                class="custom-file"
-                                v-if="step.widgetType === 'image'"
-                            >
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    @change="changeImage($event, index)"
-                                    :id="index + 'file'"
-                                    :name="index + 'file'"
-                                    class="custom-file-input"
-                                />
-                                <label
-                                    class="custom-file-label"
-                                    :for="index + 'file'"
+                            <div class="canvas--widget-item">
+                                <!-- TEXT WIDGET -->
+                                <div
+                                    class="editor inline-editor"
+                                    v-if="step.widgetType === 'text'"
                                 >
-                                    <template v-if="step.value">
-                                        Bild ändern..
+                                    <ckeditor
+                                        v-model="step.value"
+                                        :config="editorConfig"
+                                        :editor="editor"
+                                    ></ckeditor>
+                                </div>
+
+                                <!-- IMAGE WIDGET -->
+                                <div
+                                    class="custom-file"
+                                    v-if="step.widgetType === 'image'"
+                                >
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        @change="changeImage($event, index)"
+                                        :id="index + 'file'"
+                                        :name="index + 'file'"
+                                        class="custom-file-input"
+                                    />
+                                    <label
+                                        class="custom-file-label"
+                                        :for="index + 'file'"
+                                    >
+                                        <template v-if="step.value">
+                                            Bild ändern..
+                                        </template>
+                                        <template v-else>
+                                            Bild wählen...
+                                        </template>
+                                    </label>
+                                </div>
+
+                                <!-- CHECKLIST WIDGET -->
+                                <ChecklistWrapperWidget
+                                    v-if="step.widgetType === 'checklist'"
+                                    @click="addChecklistItem(index)"
+                                >
+                                    <template #content>
+                                        <div
+                                            v-for="(item, index) in step.value"
+                                            :key="index"
+                                            class="checklist-widget--item"
+                                        >
+                                            <ChecklistInputWidget
+                                                v-model="step.value[index]"
+                                            />
+                                        </div>
                                     </template>
-                                    <template v-else>
-                                        Bild wählen...
-                                    </template>
-                                </label>
+                                </ChecklistWrapperWidget>
                             </div>
                         </div>
                     </draggable>
@@ -185,6 +211,8 @@ import Canvas from "./../../components/Process/Canvas.vue";
 import ClonableWidget from "./../../components/Widgets/ClonableWidget.vue";
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import InlineEditor from "@ckeditor/ckeditor5-build-inline";
+import ChecklistInputWidget from "./../../components/Widgets/Checklist/ChecklistInputWidget";
+import ChecklistWrapperWidget from "./../../components/Widgets/Checklist/ChecklistWrapperWidget";
 
 export default {
     // ============================
@@ -192,29 +220,11 @@ export default {
     // ============================
     data() {
         return {
+            processName: "Name einfügen...",
             currentTask: 0,
-            form: {
-                name: "",
-                description: "",
-                permission: "",
-                allowedMembers: [],
-                tags: []
-            },
-            formErrors: {
-                name: "",
-                description: "",
-                permission: ""
-            },
-            teamMembers: [],
-            newTag: {
-                color: "",
-                name: ""
-            },
-            showTagsModal: false,
             tasks: [
                 {
                     label: "Title",
-                    widgetType: "text",
                     id: 0,
                     steps: []
                 }
@@ -391,6 +401,9 @@ export default {
                 case "image":
                     value = "";
                     break;
+                case "checklist":
+                    value = ["", "", ""];
+                    break;
                 default:
                     "";
             }
@@ -421,6 +434,9 @@ export default {
             let data = new FormData();
             data.append("file", event.target.files[0]);
             this.tasks[this.currentTask].steps[index].value = data;
+        },
+        addChecklistItem(index) {
+            this.tasks[this.currentTask].steps[index].value.push("");
         }
     },
     // ============================
@@ -459,7 +475,9 @@ export default {
         RelativeModal,
         Canvas,
         ClonableWidget,
-        ckeditor: CKEditor.component
+        ckeditor: CKEditor.component,
+        ChecklistWrapperWidget,
+        ChecklistInputWidget
     }
 };
 </script>

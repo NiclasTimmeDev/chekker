@@ -1,0 +1,26 @@
+.checklist-widget--item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    i {
+        color: theme-color("accent");
+    }
+
+    input {
+        border-radius: $border-radius;
+        background-color: $white;
+        border: none;
+        flex-grow: 2;
+
+        &:hover,
+        &:focus {
+            outline: none;
+            // box-shadow: 0 0 2pt 1pt theme-color("primary");
+            // border: none;
+            border-bottom: 1px solid theme-color("primary");
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+}
