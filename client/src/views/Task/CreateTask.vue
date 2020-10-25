@@ -234,7 +234,6 @@
 import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "./../../components/UI/Spinners/FullPageSpinner.vue";
 import SmallSpinner from "./../../components/UI/Spinners/SmallSpinner.vue";
-import TipTapBasic from "./../../components/RichTextEditor/TipTapBasic.vue";
 import TabModal from "./../../components/UI/TabModal";
 import ManagementSidebar from "./../../components/ManagementSidebar/ManagementSidebar.vue";
 import Accordion from "./../../components/UI/Accordion/Accordion";
@@ -296,7 +295,6 @@ export default {
     // ============================
     components: {
         FullPageSpinner,
-        TipTapBasic,
         TabModal,
         SmallSpinner,
         ManagementSidebar,

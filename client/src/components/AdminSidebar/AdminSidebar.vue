@@ -27,7 +27,7 @@
             </router-link>
 
             <!-- MODAL -->
-            <create-new-modal :showModal="showModal" :toggleModal="toggleModal">
+            <Modal :showModal="showModal" :toggleModal="toggleModal">
                 <template v-slot:title>
                     <h4>Was möchten Sie erstellen?</h4>
                 </template>
@@ -52,7 +52,7 @@
                         </li>
                     </ul>
                 </template>
-            </create-new-modal>
+            </Modal>
         </div>
     </aside>
 </template>
@@ -67,8 +67,8 @@ export default {
         };
     },
     components: {
-        "create-new-modal": Modal,
-        AdminSidebarIcon: AdminSidebarIcon
+        Modal,
+        AdminSidebarIcon
     },
     methods: {
         toggleModal() {
