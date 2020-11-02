@@ -14,7 +14,7 @@
                 <!-- MODAL ACTIONS -->
                 <div class="row-full">
                     <div class="col col-lg-6">
-                        <RelativeModal>
+                        <RelativeModal width="200px">
                             <template #button>
                                 <TransparentWithIconButton
                                     :icon="'fas fa-lock'"
@@ -34,7 +34,7 @@
                         </RelativeModal>
                     </div>
                     <div class="col col-lg-6">
-                        <RelativeModal>
+                        <RelativeModal width="200px">
                             <template #button>
                                 <TransparentWithIconButton
                                     :icon="'fas fa-clock'"
@@ -55,8 +55,13 @@
                     </div>
                 </div>
 
+                <!-- DRAG & DROP OF TASKS -->
                 <div class="draggable">
-                    <draggable v-model="tasks" ghost-class="draggable--ghost">
+                    <draggable
+                        ghost-class="draggable--ghost"
+                        :list="tasks"
+                        group="tasks"
+                    >
                         <transition-group>
                             <!-- ONE CARD FOR EVERY TASK -->
                             <ManagementCard
@@ -76,11 +81,13 @@
                     </draggable>
                 </div>
 
+                <!-- ADD NEW TASK BUTTON -->
                 <button class="btn btn-link" @click="addTask">
                     Neuer Task
                 </button></template
             ></management-sidebar
         >
+        <!-- LABEL OF CURRENT TASK -->
         <div class="with-sidebar-content">
             <div class="row justify-content-center">
                 <div class="col-md-9 col-lg-8">
@@ -90,6 +97,7 @@
             <!-- CANVAS -->
             <Canvas>
                 <template #content>
+                    <!-- CTA IF THERE IS NO WIDGET YET -->
                     <p
                         class="text-center"
                         v-if="tasks[currentTask].steps.length === 0"
@@ -97,6 +105,7 @@
                         Ziehen Sie ein Widget von der rechten Seite des
                         Bildschirms hier her.
                     </p>
+                    <!-- WIDGETS -->
                     <draggable
                         class="drag-area"
                         :list="tasks[currentTask].steps"
@@ -163,6 +172,57 @@
                                         </div>
                                     </template>
                                 </ChecklistWrapperWidget>
+
+                                <!-- EMAIL WIDGET -->
+                                <EmailWidget
+                                    v-if="step.widgetType === 'email'"
+                                    v-model="step.value"
+                                    @clickTokenButton="addToken(index)"
+                                    :tokens="step.value.tokens"
+                                >
+                                    <template #modalContent>
+                                        <div class="form-group">
+                                            <label
+                                                class="mt-3"
+                                                :for="`token-${index}`"
+                                                >Name des Tokens</label
+                                            >
+                                            <input
+                                                class="form-control form-control-sm "
+                                                type="text"
+                                                placeholder="Name des Tokens..."
+                                                :id="`token-${index}`"
+                                                v-model="
+                                                    step.value.tokens[
+                                                        step.value.tokens
+                                                            .length - 1
+                                                    ].name
+                                                "
+                                                @input="
+                                                    'input',
+                                                        updateTokenValue(
+                                                            index,
+                                                            step.value.tokens
+                                                                .length - 1
+                                                        )
+                                                "
+                                            />
+                                            <label
+                                                class="mt-3"
+                                                :for="`token-${index}`"
+                                                >Platzhalter</label
+                                            >
+                                            <div>
+                                                {{
+                                                    step.value.tokens[
+                                                        step.value.tokens
+                                                            .length - 1
+                                                    ].value
+                                                }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                </EmailWidget>
                             </div>
                         </div>
                     </draggable>
@@ -213,7 +273,8 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import InlineEditor from "@ckeditor/ckeditor5-build-inline";
 import ChecklistInputWidget from "./../../components/Widgets/Checklist/ChecklistInputWidget";
 import ChecklistWrapperWidget from "./../../components/Widgets/Checklist/ChecklistWrapperWidget";
-
+import EmailWidget from "./../../components/Widgets/Email/EmailWidget";
+import TokenModal from "./../../components/Process/Email/TokenModal.vue";
 export default {
     // ============================
     // DATA
@@ -222,6 +283,7 @@ export default {
         return {
             processName: "Name einfügen...",
             currentTask: 0,
+            isTokenModalActive: false,
             tasks: [
                 {
                     label: "Title",
@@ -310,71 +372,6 @@ export default {
             this.currentTask = id;
         },
         /**
-         * Submit the form.
-         */
-        async submit() {
-            // Early return if inputs are invalid.
-            this._validateInputs();
-            if (
-                this.formErrors.name ||
-                this.formErrors.description ||
-                this.formErrors.permission
-            ) {
-                return;
-            }
-
-            // Send req to api via vuex.
-            const newProcess = await this.createProcess(this.form);
-
-            // Navigate to new process overview page.
-            this.$router.push({ path: `/process/${newProcess.id}` });
-        },
-        /**
-         * Check if all required values of the form are set.
-         */
-        _validateInputs() {
-            // No name.
-            if (!this.form.name) {
-                this.formErrors.name = "Bitte geben Sie einen Namen ein.";
-            } else {
-                this.formErrors.name = "";
-            }
-
-            // No description.
-            if (!this.form.description) {
-                this.formErrors.description =
-                    "Bitte geben Sie eine Beschreibung ein.";
-            } else {
-                this.formErrors.description = "";
-            }
-
-            // No permission.
-            if (!this.form.permission) {
-                this.formErrors.permission =
-                    "Bitte vergeben Sie Berechtigungen.";
-            }
-
-            // Advanced permission but no team members selected.
-            if (
-                this.form.permission === "advanced" &&
-                this.form.allowedMembers.length === 0
-            ) {
-                this.formErrors.permission =
-                    "Bitte vergeben Sie Berechtigungen für einzelne Teammitglieder.";
-            }
-            // Permission other than advanced.
-            if (this.form.permission && this.form.permission !== "advanced") {
-                this.formErrors.permission = "";
-            }
-            // Advanced permission but no members selected.
-            if (
-                this.form.permission === "advanced" &&
-                this.form.allowedMembers.length !== 0
-            ) {
-                this.formErrors.permission = "";
-            }
-        },
-        /**
          * Clone a widget. This function is called
          * when a widget from the ControlSidebar is dragged.
          * It will return a new tasks object. This will be appended
@@ -404,6 +401,15 @@ export default {
                 case "checklist":
                     value = ["", "", ""];
                     break;
+                case "email":
+                    value = {
+                        receiver: "",
+                        cc: "",
+                        subject: "",
+                        body: "",
+                        tokens: []
+                    };
+                    break;
                 default:
                     "";
             }
@@ -414,13 +420,6 @@ export default {
                 widgetType: widget.type,
                 value: value
             };
-        },
-        /**
-         * Show and hide modal to add tags.
-         */
-        toggleTagsModal() {
-            this.getAllTags();
-            this.showTagsModal = !this.showTagsModal;
         },
         /**
          * Append image form data.
@@ -435,30 +434,66 @@ export default {
             data.append("file", event.target.files[0]);
             this.tasks[this.currentTask].steps[index].value = data;
         },
+        /**
+         * Attach a new checklist item to the checklist form
+         * @param {string} index
+         *   The index of the current step in the current task.
+         */
         addChecklistItem(index) {
             this.tasks[this.currentTask].steps[index].value.push("");
-        }
-    },
-    // ============================
-    // beforeUpdate
-    // ============================
-    /**
-     * If advanced permission settings are chosen
-     * Show all members of the team
-     */
-    beforeUpdate() {
-        // Don't do anything if permission is not set to advanced.
-        if (this.form.permission !== "advanced") {
-            this.form.allowedMembers = [];
-            return;
-        }
+        },
+        /**
+         * Attach a new token to the email form
+         * @param {string} index
+         *   The index of the current step in the current task.
+         */
+        addToken(index) {
+            // Check if token modal is currently open. If so, do nothing.
+            const task = this.tasks[this.currentTask].steps[index];
+            if (this.isTokenModalActive) {
+                this.isTokenModalActive = !this.isTokenModalActive;
+                return;
+            }
 
-        // Return if members are already in state.
-        if (this.team.membersLoaded) {
-            return;
-        }
+            /**
+             * Check if its actually an email widget
+             * and if tokens array exists.
+             */
+            if (task.widgetType !== "email" || !task.value.tokens) {
+                this.isTokenModalActive = !this.isTokenModalActive;
+                return;
+            }
 
-        this.loadTeamMembers();
+            // Add new item to tokens array.
+            task.value.tokens.push({
+                name: "",
+                value: ""
+            });
+            this.isTokenModalActive = !this.isTokenModalActive;
+        },
+        /**
+         * Sanitize the name of a token
+         * and thereby create a placeholder string
+         * that can then be referenced in the mail body.
+         *
+         * @param {string} taskIndex
+         *   The index of the current step in the current Task.
+         * @param tokenIndex
+         *   The index of the current token.
+         */
+        updateTokenValue(taskIndex, tokenIndex) {
+            const task = this.tasks[this.currentTask].steps[taskIndex];
+            const token = this.tasks[this.currentTask].steps[taskIndex].value
+                .tokens[tokenIndex];
+            // Replace spaces with underscores.
+            const nospaces = token.name.replace(" ", "_");
+            // Convert to only lower case.
+            const onlyLower = nospaces.toLowerCase();
+            // Replace special characrters.
+            const final = onlyLower.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+            // Replace value of token.
+            token.value = `{{::${final}::}}`;
+        }
     },
     // ============================
     // COMPONENTS
@@ -477,7 +512,9 @@ export default {
         ClonableWidget,
         ckeditor: CKEditor.component,
         ChecklistWrapperWidget,
-        ChecklistInputWidget
+        ChecklistInputWidget,
+        TokenModal,
+        EmailWidget
     }
 };
 </script>

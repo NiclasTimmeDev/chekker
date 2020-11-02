@@ -1,5 +1,5 @@
 <template>
-    <button class="btn btn-transparent flex-button btn-sm">
+    <button class="btn btn-transparent flex-button btn-sm" @click="onClick">
         <span>
             <i :class="icon"></i>
         </span>
@@ -8,6 +8,11 @@
 </template>
 <script>
 export default {
-    props: ["icon", "text"]
+    props: ["icon", "text"],
+    methods: {
+        onClick() {
+            this.$emit("click");
+        }
+    }
 };
 </script>

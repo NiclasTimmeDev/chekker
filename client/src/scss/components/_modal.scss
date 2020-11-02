@@ -59,8 +59,8 @@
         background-color: $white;
         top: 40px;
         left: 0;
-        width: 200px;
-        height: 250px;
+        //width: 200px;
+        max-height: 250px;
         overflow: hidden;
         display: flex;
         flex-flow: column;

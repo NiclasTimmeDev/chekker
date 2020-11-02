@@ -10,7 +10,11 @@
             <!-- BUTTON -->
             <slot name="button"></slot>
         </div>
-        <div v-if="showModal" class="relative-modal--modal p-2">
+        <div
+            v-if="showModal"
+            class="relative-modal--modal p-2"
+            :style="`width:${width}`"
+        >
             <span @click="toggleModal" class="close-icon">
                 <i class="fas fa-times"></i>
             </span>
@@ -23,6 +27,7 @@
 </template>
 <script>
 export default {
+    props: ["width"],
     data() {
         return {
             showModal: false

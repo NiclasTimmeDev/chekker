@@ -1,0 +1,16 @@
+.email-widget--wrapper {
+    .email-widget--body {
+        position: relative;
+        textarea {
+            padding-right: $spacer * 1.5;
+        }
+
+        .token-icon {
+            padding: 5px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+        }
+    }
+}
