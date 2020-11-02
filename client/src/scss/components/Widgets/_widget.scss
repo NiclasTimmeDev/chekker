@@ -1,0 +1,22 @@
+.canvas--widget-wrapper {
+    position: relative;
+    .canvas--widget-actions-wrapper {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: none;
+
+        .canvas--widget-actions-item {
+            cursor: pointer;
+            &:hover {
+                color: theme-color("primary");
+            }
+        }
+    }
+
+    &:hover {
+        .canvas--widget-actions-wrapper {
+            display: block;
+        }
+    }
+}

@@ -116,6 +116,23 @@
                             v-for="(step, index) in tasks[currentTask].steps"
                             :key="index"
                         >
+                            <!-- WIDGET ACTIONS -->
+                            <div class="canvas--widget-actions-wrapper p-2">
+                                <!-- Clone -->
+                                <span
+                                    @click="cloneStep(index)"
+                                    class="canvas--widget-actions-item"
+                                >
+                                    <i class="fas fa-clone mr-2"></i>
+                                </span>
+                                <!-- Delete -->
+                                <span
+                                    @click="deleteStep(index)"
+                                    class="canvas--widget-actions-item"
+                                >
+                                    <i class="fas fa-trash "></i>
+                                </span>
+                            </div>
                             <div class="canvas--widget-item">
                                 <!-- TEXT WIDGET -->
                                 <div
@@ -493,6 +510,21 @@ export default {
             const final = onlyLower.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
             // Replace value of token.
             token.value = `{{::${final}::}}`;
+        },
+        /**
+         * Delete a step from the current task.
+         *
+         * @param {string} index
+         *   The index of the step that should be deleted from the current task.
+         */
+        deleteStep(index) {
+            const steps = this.tasks[this.currentTask].steps;
+            steps.splice(index, 1);
+        },
+        cloneStep(index) {
+            const steps = this.tasks[this.currentTask].steps;
+            const toClone = { ...steps[index] };
+            steps.splice(index, 0, toClone);
         }
     },
     // ============================
