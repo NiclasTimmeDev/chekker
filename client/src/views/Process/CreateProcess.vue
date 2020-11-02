@@ -434,6 +434,7 @@ export default {
             return {
                 id: this.tasks[this.currentTask].steps.length,
                 label: widget.label,
+                widgetID: widget.id,
                 widgetType: widget.type,
                 value: value
             };
@@ -522,9 +523,27 @@ export default {
             steps.splice(index, 1);
         },
         cloneStep(index) {
+            // Get all steps.
             const steps = this.tasks[this.currentTask].steps;
-            const toClone = { ...steps[index] };
-            steps.splice(index, 0, toClone);
+
+            // Get the ID of the corresponding clonable widget.
+            const widgetID = steps[index].widgetID;
+
+            // Create a clone.
+            let clone = this.clone({ id: widgetID });
+
+            // Get the value of the old widget
+            const value = steps[index].value;
+
+            // Check the type of the value and copy the value appropriately.
+            if (value.isArray) {
+                clone.value = [...value];
+            } else if (typeof value === "object") {
+                clone.value = { ...value };
+            } else {
+                clone.value = value;
+            }
+            steps.splice(index + 1, 0, clone);
         }
     },
     // ============================
