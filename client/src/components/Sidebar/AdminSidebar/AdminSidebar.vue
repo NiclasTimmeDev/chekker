@@ -57,7 +57,7 @@
     </aside>
 </template>
 <script>
-import Modal from "./../UI/Modal";
+import Modal from "./../../UI/Modals/Modal";
 import AdminSidebarIcon from "./AdminSidebarIcon";
 export default {
     data() {
@@ -73,7 +73,6 @@ export default {
     methods: {
         toggleModal() {
             this.showModal = !this.showModal;
-            console.log("ok");
         },
         toggleSidebarWidth() {
             this.sidebarBig = !this.sidebarBig;

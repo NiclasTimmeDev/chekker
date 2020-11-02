@@ -1,24 +1,47 @@
+//=================
 // Mixins.
+//=================
 @import "./../../node_modules/bootstrap/scss/mixins";
 @import "./mixins";
 
+//=================
 // Base variables
+//=================
 @import "./variables.scss";
 
+//=================
 // Bootstrap.
+//=================
 @import "./../../node_modules/bootstrap/scss/bootstrap";
 
+//=================
 // Fonts.
+//=================
 @import "./fonts";
 
+//=================
 // Form Elements
+//=================
 @import "./forms";
 
+//=================
 // Layout, e.g., grid system adaptions
+//=================
 @import "./_layout.scss";
 
-// Components.
-@import "./components/_adminSidebar.scss";
+//=================
+//Components.
+//=================
+// Sidebars.
+@import "./components/Sidebars/_adminSidebar.scss";
+@import "./components/Sidebars/_managementSidebar.scss";
+@import "./components/Sidebars/_controlSidebar.scss";
+// Widgets.
+@import "./components/Widgets/_widget.scss";
+@import "./components/Widgets/_checklistWidget.scss";
+@import "./components/Widgets/_emailWidget.scss";
+@import "./components/Widgets/_clonableWidget.scss";
+
 @import "./components/_headers.scss";
 @import "./components/_navigation.scss";
 @import "./components/_cards.scss";
@@ -26,12 +49,6 @@
 @import "./components/_modal.scss";
 @import "./components/_accordion.scss";
 @import "./components/_table.scss";
-@import "./components/_managementSidebar.scss";
-@import "./components/_controlSidebar.scss";
 @import "./components/_draggable.scss";
-@import "./components/Process/_canvas.scss";
-@import "./components/Process/_clonableWidget.scss";
+@import "./components/_canvas.scss";
 @import "./components/_inlineEditor.scss";
-@import "./components/Widgets/_widget.scss";
-@import "./components/Widgets/_checklistWidget.scss";
-@import "./components/Widgets/_emailWidget.scss";

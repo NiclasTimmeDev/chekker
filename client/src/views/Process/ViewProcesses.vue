@@ -88,7 +88,7 @@
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "../../components/UI/Spinners/FullPageSpinner.vue";
-import Tag from "./../../components/Tag";
+import Tag from "./../../components/UI/Tags/Tag";
 export default {
     // ============================
     // COMPUTED

@@ -4,7 +4,7 @@
 
 <script>
 import { mapState } from "vuex";
-import AdminSidebar from "./../components/AdminSidebar/AdminSidebar.vue";
+import AdminSidebar from "./../components/Sidebar/AdminSidebar/AdminSidebar.vue";
 export default {
     computed: {
         ...mapState({

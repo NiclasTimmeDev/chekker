@@ -276,11 +276,11 @@
 <script>
 import { mapGetters, mapState, mapActions } from "vuex";
 import FullPageSpinner from "./../../components/UI/Spinners/FullPageSpinner.vue";
-import Tag from "./../../components/Tag";
-import Modal from "./../../components/UI/Modal.vue";
-import ManagementSidebar from "./../../components/ManagementSidebar/ManagementSidebar.vue";
-import ControlSidebar from "./../../components/UI/ControlSidebar/ControlSidebar.vue";
-import ManagementCard from "./../../components/ManagementSidebar/ManagementCard.vue";
+import Tag from "./../../components/UI/Tags/Tag";
+import Modal from "./../../components/UI/Modals/Modal.vue";
+import ManagementSidebar from "./../../components/Sidebar/ManagementSidebar/ManagementSidebar.vue";
+import ControlSidebar from "./../../components/Sidebar/ControlSidebar/ControlSidebar.vue";
+import ManagementCard from "./../../components/Sidebar/ManagementSidebar/ManagementCard.vue";
 import TransparentWithIconButton from "./../../components/UI/Buttons/TransparentWithIconButton.vue";
 import RelativeModal from "./../../components/UI/Modals/RelativeModal.vue";
 import draggable from "vuedraggable";
