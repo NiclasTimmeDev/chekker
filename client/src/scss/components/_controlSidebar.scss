@@ -1,25 +1,11 @@
 .control-sidebar--wrapper {
-    width: 162px;
-    overflow: hidden;
     height: 100vh;
-    transition: 0.3s ease-in-out;
-}
-
-.control-sidebar--wrapper-hide {
-    width: 32px;
-    transition: 0.3s ease-in-out;
-    z-index: 101;
-}
-
-.control-sidebar {
-    width: 130px;
-    height: 100vh;
-    position: fixed;
-    transition: 0.3s ease-in-out;
-
-    top: 0;
-    background-color: $white;
+    transition: 0.3s width ease-in-out;
     box-shadow: $box-shadow-default;
+    position: sticky;
+    top: 0;
+    right: 0;
+    width: inherit;
 
     .control-sidebar--toggle-icon {
         position: absolute;
@@ -28,7 +14,6 @@
         width: 32px;
         height: 34px;
         background-color: $white;
-        // box-shadow: $box-shadow-default;
         border-right: none;
         border-top: 1px solid theme-color("grey");
         border-left: 1px solid theme-color("grey");
@@ -49,9 +34,16 @@
     }
 }
 
-.control-sidebar--show {
-    right: 0;
+.control-sidebar--wrapper-hide {
+    width: 0;
+    transition: 0.3s width ease-in-out;
+    z-index: 101;
 }
-.control-sidebar--hide {
-    right: -130px;
+
+.control-sidebar {
+    height: 100vh;
+    transition: 0.3s ease-in-out;
+    top: 0;
+    background-color: $white;
+    box-shadow: $box-shadow-default;
 }

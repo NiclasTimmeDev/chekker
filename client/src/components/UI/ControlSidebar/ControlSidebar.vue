@@ -4,17 +4,11 @@
     It's fixed and can be used to parent action items or things alike.
     It has toggle state.
     -->
-    <div
-        class="control-sidebar--wrapper"
-        :class="{
-            'control-sidebar--wrapper-hide': !show
-        }"
-    >
+    <div class="flex">
         <div
-            class="control-sidebar p-1"
+            class="control-sidebar--wrapper"
             :class="{
-                'control-sidebar--show': show,
-                'control-sidebar--hide': !show
+                'control-sidebar--wrapper-hide': !show
             }"
         >
             <span @click="toggle" class="control-sidebar--toggle-icon">
@@ -25,8 +19,16 @@
                     }"
                 ></i>
             </span>
-            <!-- CONTENT -->
-            <slot name="content"></slot>
+            <div
+                class="control-sidebar p-1"
+                :class="{
+                    'control-sidebar--show': show,
+                    'control-sidebar--hide': !show
+                }"
+            >
+                <!-- CONTENT -->
+                <slot name="content"></slot>
+            </div>
         </div>
     </div>
 </template>
