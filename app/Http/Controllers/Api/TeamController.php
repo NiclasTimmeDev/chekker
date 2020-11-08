@@ -47,37 +47,41 @@ class TeamController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Createa and store a new team.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        // Check if name is provided.
-        $request->validate([
-            'name' => 'required'
-        ]);
-
-        // Generate Acces code.
-        $acces_code = $this->generateAccessCode($request->name);
-
-        // Get user from middlware.
-        $user = Auth::user();
-
-        $new_team = new Team([
-            'name' => $request->name,
-            'user_id' => $user->id,
-            'access_code' => $acces_code
-        ]);
-
-        // Save user.
         try {
+            // Get variables from request.
+            if (!$request->name) {
+                return ExceptionHelper::customSingleError("Das Team muss einen Namen haben.", 400);
+            }
+
+            // Generate Acces code.
+            $acces_code = $this->generateAccessCode($request->name);
+
+            // Get user from middlware.
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError('User nicht gefunden.', 400);
+            }
+
+            $new_team = new Team([
+                'name' => $request->name,
+                'user_id' => $user->id,
+                'access_code' => $acces_code,
+            ]);
+
+            // Save user.
+
             $new_team->save();
             $user->teams()->attach($new_team);
             return $new_team;
         } catch (Throwable $e) {
-            report($e);
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
             return false;
         }
     }

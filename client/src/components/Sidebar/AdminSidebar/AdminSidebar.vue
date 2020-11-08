@@ -2,12 +2,33 @@
     <aside id="admin-sidebar" class="sidebar bg-darkest">
         <div class="sidebar-content pt-2 pb-3 px-1">
             <!-- ADD BUTTON -->
-            <div @click="toggleModal">
-                <AdminSidebarIcon
-                    :class="'fas fa-plus'"
-                    :isButtonIcon="true"
-                ></AdminSidebarIcon>
-            </div>
+            <PopUp width="300px" title="Neu">
+                <template #button>
+                    <AdminSidebarIcon
+                        :class="'fas fa-plus'"
+                        :isButtonIcon="true"
+                    ></AdminSidebarIcon>
+                </template>
+                <template #body>
+                    <ul class="list-group">
+                        <li class="list-group-item" @click="toggleNewTeamModal">
+                            Team
+                        </li>
+                        <li
+                            @click="toggleNewProcessModal"
+                            class="list-group-item"
+                        >
+                            Prozess
+                        </li>
+                        <li
+                            @click="toggleNewProcessModal"
+                            class="list-group-item"
+                        >
+                            Tag
+                        </li>
+                    </ul>
+                </template>
+            </PopUp>
 
             <!-- PROFILE -->
             <router-link to="/profile">
@@ -26,53 +47,51 @@
                 ></AdminSidebarIcon>
             </router-link>
 
-            <!-- MODAL -->
-            <Modal :showModal="showModal" :toggleModal="toggleModal">
-                <template v-slot:title>
-                    <h4>Was möchten Sie erstellen?</h4>
-                </template>
-                <template v-slot:body>
-                    <ul class="list-group">
-                        <li class="list-group-item" @click="toggleModal">
-                            <router-link to="/team/create" class="text-primary"
-                                >Team</router-link
-                            >
-                        </li>
-                        <li @click="toggleModal" class="list-group-item">
-                            <router-link
-                                to="/process/create"
-                                class="text-primary"
-                                >Prozess</router-link
-                            >
-                        </li>
-                        <li @click="toggleModal" class="list-group-item">
-                            <router-link to="/tag/create" class="text-primary"
-                                >Tag</router-link
-                            >
-                        </li>
-                    </ul>
-                </template>
-            </Modal>
+            <!-- NEW PROCESS MODAL -->
+            <CreateProcessModal
+                :show="showNewProcessModal"
+                :toggle="toggleNewProcessModal"
+            >
+            </CreateProcessModal>
+
+            <!-- NEW TEAM MODAL -->
+            <CreateTeamModal
+                :show="showNewTeamModal"
+                :toggle="toggleNewTeamModal"
+            >
+            </CreateTeamModal>
         </div>
     </aside>
 </template>
 <script>
 import Modal from "./../../UI/Modals/Modal";
 import AdminSidebarIcon from "./AdminSidebarIcon";
+import CreateProcessModal from "./../../Process/CreateProcessModal";
+import CreateTeamModal from "./../../Team/CreateTeamModal";
+import PopUp from "./../../UI/Popups/PopUp";
+import Spinner from "./../../UI/Spinners/SmallSpinner";
 export default {
     data() {
         return {
-            showModal: false,
+            showNewProcessModal: false,
+            showNewTeamModal: false,
             sidebarBig: true
         };
     },
     components: {
         Modal,
-        AdminSidebarIcon
+        AdminSidebarIcon,
+        CreateProcessModal,
+        CreateTeamModal,
+        PopUp,
+        Spinner
     },
     methods: {
-        toggleModal() {
-            this.showModal = !this.showModal;
+        toggleNewProcessModal() {
+            this.showNewProcessModal = !this.showNewProcessModal;
+        },
+        toggleNewTeamModal() {
+            this.showNewTeamModal = !this.showNewTeamModal;
         },
         toggleSidebarWidth() {
             this.sidebarBig = !this.sidebarBig;

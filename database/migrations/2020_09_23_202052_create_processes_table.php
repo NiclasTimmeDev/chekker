@@ -20,7 +20,7 @@ class CreateProcessesTable extends Migration
             $table->string('title');
 
             // The title of the process.
-            $table->text('description');
+            $table->text('description')->nullable();
 
             // The creator of the process.
             $table->unsignedBigInteger('user_id')->nullable();
@@ -34,10 +34,16 @@ class CreateProcessesTable extends Migration
             // The recurrence pattern of the process.
             $table->string('recurrence_pattern')->nullable();
 
-            // The category of the process
+            // The category (folder) of the process
             $table->unsignedBigInteger('category_id')->nullable();
 
             $table->boolean('is_active')->default(false);
+
+            // The last kind of activity.
+            $table->string('last_activity')->nullable();
+
+            // The number of tasks in the process.
+            $table->integer('task_count')->default(0);
 
             // Default timestamps.
             $table->timestamps();

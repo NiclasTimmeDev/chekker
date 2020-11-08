@@ -61,7 +61,7 @@
                     </textarea>
                 </div>
             </div>
-            <RelativeModal width="300px">
+            <PopUp width="300px">
                 <template #button>
                     <div class="btn btn-link" @click="clickTokenButton">
                         <span><i class="fas fa-plus"></i></span>
@@ -72,7 +72,7 @@
                     <!-- MODAL CONTENT SLOT -->
                     <slot name="modalContent"></slot>
                 </template>
-            </RelativeModal>
+            </PopUp>
             <span
                 v-for="(token, index) in tokens"
                 :key="index"
@@ -95,7 +95,7 @@
     </div>
 </template>
 <script>
-import RelativeModal from "./../../UI/Modals/RelativeModal";
+import PopUp from "./../../UI/Popups/PopUp";
 export default {
     props: ["value", "tokens"],
     methods: {
@@ -142,7 +142,7 @@ export default {
     },
 
     components: {
-        RelativeModal
+        PopUp
     }
 };
 </script>

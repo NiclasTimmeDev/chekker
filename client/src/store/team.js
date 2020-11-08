@@ -121,7 +121,7 @@ export default {
             try {
                 const { name } = team;
                 const res = await axios.post("/api/team", { name });
-
+                console.log(res);
                 if (res.status === 201) {
                     localStorageService.add("current_team", res.data.id, true);
                     commit("storeTeam", res.data);

@@ -62,6 +62,14 @@ export default {
             state.processesOfUser = processes;
             state.error = "";
         },
+        /**
+         * Store an error.
+         *
+         * @param {object} state
+         *   The state Object
+         * @param {string} msg
+         *   The error message.
+         */
         storeProcessError(state, msg) {
             state.loading = false;
             state.error = msg;
@@ -85,31 +93,23 @@ export default {
             try {
                 commit("startProcessLoading");
                 // Get params from form.
-                let {
-                    name,
-                    description,
-                    permission,
-                    allowedMembers,
-                    tags
-                } = form;
-
-                // Transform allowedMembers and tags from Vue observer obj to array.
-                allowedMembers = JSON.parse(
-                    JSON.stringify(form.allowedMembers)
-                );
-                tags = JSON.parse(JSON.stringify(form.tags));
+                const name = form.title;
 
                 // Get currently selected team from local storage.
                 const currentTeam = localStorageService.get("current_team");
 
+                // Return if no team is selected.
+                if (!currentTeam) {
+                    return commit(
+                        "storeProcessError",
+                        "Es ist kein Team ausgewählt."
+                    );
+                }
+
                 // Send request.
                 const res = await axios.post("/api/process", {
                     team_id: currentTeam,
-                    name: name,
-                    description: description,
-                    permission: permission,
-                    allowed_members: allowedMembers,
-                    tags: tags
+                    name: name
                 });
 
                 // Store new team if request was successful.
@@ -118,6 +118,7 @@ export default {
                     return res.data;
                 }
             } catch (error) {
+                console.log(error);
                 commit("storeProcessError", error.response.data.error);
                 return false;
             }

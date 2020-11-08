@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     // Determine which fields can be filled by the user.
-    protected $fillable = ['name', 'access_code', 'user_id'];
+    protected $fillable = ['name', 'access_code', 'user_id', 'is_premium'];
 
     // Many to many  relationship with users.
     public function users()

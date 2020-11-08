@@ -14,13 +14,13 @@ export default {};
 .spinner-wrapper {
     width: 100%;
     height: 100%;
-    min-height: 60px;
-    min-width: 60px;
+    /* min-height: 60px;
+    min-width: 60px; */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
-    background-color: #fff;
+    background-color: transparent;
 }
 .spinner-border {
     z-index: 101;

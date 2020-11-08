@@ -1,33 +1,36 @@
 <template>
     <!-- 
-    A Button that opens a modal on click.
+    A Button that opens a popup on click.
     The modal will appear right beneath the button,
     which increases UX.
-    The modal has no background overlay as normal modals do
     -->
-    <div class="relative-modal--wrapper">
-        <div class="relative-modal--button" @click="toggleModal">
+    <div class="pop-up--wrapper">
+        <div class="pop-up--button" @click="toggleModal">
             <!-- BUTTON -->
             <slot name="button"></slot>
         </div>
         <div
             v-if="showModal"
-            class="relative-modal--modal p-2"
+            class="pop-up--modal p-2"
             :style="`width:${width}`"
         >
-            <span @click="toggleModal" class="close-icon">
-                <i class="fas fa-times"></i>
-            </span>
+            <div class="pop-up--header">
+                <h4>{{ title }}</h4>
+                <span @click="toggleModal" class="close-icon">
+                    <i class="fas fa-times"></i>
+                </span>
+            </div>
+
             <!-- MODAL CONTENT -->
-            <div class="relative-modal--content">
-                <slot name="modalContent"></slot>
+            <div @click="toggleModal" class="pop-up--content">
+                <slot name="body"></slot>
             </div>
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ["width"],
+    props: ["width", "title"],
     data() {
         return {
             showModal: false
@@ -35,7 +38,6 @@ export default {
     },
     methods: {
         toggleModal() {
-            console.log("check");
             this.showModal = !this.showModal;
         }
     }

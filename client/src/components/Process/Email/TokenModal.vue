@@ -1,5 +1,5 @@
 <template>
-    <RelativeModal>
+    <PopUp>
         <template #button>
             <TransparentWithIconButton
                 :icon="'fas fa-plus'"
@@ -20,15 +20,15 @@
                 </div>
             </div>
         </template>
-    </RelativeModal>
+    </PopUp>
 </template>
 <script>
-import RelativeModal from "./../../UI/Modals/RelativeModal";
+import PopUp from "./../../UI/Popups/PopUp";
 import TransparentWithIconButton from "./../../UI/Buttons/TransparentWithIconButton.vue";
 export default {
     props: ["value"],
     components: {
-        RelativeModal,
+        PopUp,
         TransparentWithIconButton
     },
     methods: {

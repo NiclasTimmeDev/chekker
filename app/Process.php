@@ -15,6 +15,8 @@ class Process extends Model
         'recurrence_pattern',
         'category_id',
         'is_active',
+        'last_activity',
+        'task_count'
     ];
     // m:n relationship with users.
     public function users()

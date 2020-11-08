@@ -10,6 +10,7 @@ import JoinTeam from "./../views/Team/JoinTeam.vue";
 import UpdateTeam from "./../views/Team/UpdateTeam.vue";
 import Team from "./../views/Team/Team.vue";
 // PROCESSES
+import EditProcess from "./../views/Process/EditProcess.vue";
 import CreateProcess from "./../views/Process/CreateProcess.vue";
 import ViewProcesses from "./../views/Process/ViewProcesses.vue";
 import ViewProcess from "./../views/Process/ViewProcess.vue";
@@ -65,6 +66,11 @@ const routes = [
     /* ====================
     PROCESSES
     ==================== */
+    {
+        path: "/process/edit/:id",
+        name: "EditProcess",
+        component: EditProcess
+    },
     {
         path: "/process/create",
         name: "CreateProcess",

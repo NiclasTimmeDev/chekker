@@ -25,6 +25,9 @@ class CreateTeamsTable extends Migration
 
             // The code for joining the team.
             $table->string('access_code')->nullable();
+
+            // If the team is a premium plan team
+            $table->boolean("is_premium")->default(false);
         });
     }
 
