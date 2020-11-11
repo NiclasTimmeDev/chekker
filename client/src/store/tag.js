@@ -24,6 +24,11 @@ export default {
         startTagLoading(state) {
             state.loading = true;
         },
+        /**
+         * Start Loading.
+         *
+         * @param {object} state
+         */
         stopTagLoading(state) {
             state.loading = false;
         },

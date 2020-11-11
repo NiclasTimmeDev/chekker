@@ -3,7 +3,12 @@
         <!-- MANAGEMENT SIDEBAR -->
         <management-sidebar
             ><template #content>
-                <button class="btn btn-primary mb-3">Speichern</button>
+                <button
+                    class="btn btn-primary mb-3"
+                    @click.prevent="submitTasks"
+                >
+                    Speichern
+                </button>
                 <h4 class="mb-3">
                     <input
                         type="text"
@@ -301,6 +306,7 @@ export default {
             processName: "Name einfügen...",
             currentTask: 0,
             isTokenModalActive: false,
+            error: "",
             tasks: [
                 {
                     label: "Title",
@@ -344,7 +350,7 @@ export default {
     // COMPUTED
     // ============================
     computed: {
-        ...mapState(["team", "auth", "tag", "process"]),
+        ...mapState(["team", "auth", "tag", "process", "task"]),
         ...mapGetters(["getMembers", "getTags"])
     },
     // ============================
@@ -365,7 +371,12 @@ export default {
     // METHODS
     // ============================
     methods: {
-        ...mapActions(["loadTeamMembers", "createProcess", "getAllTags"]),
+        ...mapActions([
+            "loadTeamMembers",
+            "createProcess",
+            "getAllTags",
+            "storeTasks"
+        ]),
         /**
          * Add a new task to the list.
          * The id makes it idenfiable
@@ -544,6 +555,37 @@ export default {
                 clone.value = value;
             }
             steps.splice(index + 1, 0, clone);
+        },
+        /**
+         * Submit tasks to the API.
+         */
+        async submitTasks() {
+            // Check if there are tasks
+            if (!this.tasks || this.tasks.length === 0) {
+                this.error = "Keine tasks vorhanden";
+                return;
+            }
+
+            // Get process id from url
+            const processID = this.$route.params.id;
+
+            // Reformat tasks array.
+            const submittable = this.tasks.map((task, index) => {
+                return {
+                    title: task.label,
+                    rank: index,
+                    steps: task.steps
+                };
+            });
+
+            // QUERY API AND HANDLE RESPONSE.
+            const res = this.storeTasks({
+                processID: processID,
+                tasks: submittable
+            });
+            if (res) {
+                // BE HAPPY.
+            }
         }
     },
     // ============================

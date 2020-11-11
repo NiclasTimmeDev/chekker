@@ -7,6 +7,7 @@ import auth from "./auth/authStore";
 import team from "./team";
 import process from "./process";
 import tag from "./tag";
+import task from "./task";
 
 export default new Vuex.Store({
     state: {},
@@ -17,6 +18,7 @@ export default new Vuex.Store({
         auth,
         team,
         process,
-        tag
+        tag,
+        task
     }
 });

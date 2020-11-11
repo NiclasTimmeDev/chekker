@@ -28,4 +28,9 @@ class Process extends Model
     {
         return $this->belongsToMany('App\Tag')->withTimestamps();
     }
+    // 1:n relationship with tasks.
+    public function tasks()
+    {
+        return $this->hasMany('App\Task')->withTimestamps();
+    }
 }

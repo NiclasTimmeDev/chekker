@@ -15,28 +15,30 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            // Creator.
-            $table->unsignedBigInteger('user_id')->nullable();
-
-            // The process the task belongs to.
-            $table->unsignedBigInteger('process_id')->nullable();
-
-            // The E-Mail template that will be sent.
-            $table->unsignedBigInteger('template_id')->nullable();
-
-            // The person that's involed. May be 3rd party.
-            $table->unsignedBigInteger('involved_person')->nullable();
-
-            // Default timestamps.
-            $table->timestamps();
 
             // The title of the task.
             $table->string('title');
 
-            // The description of the task.
-            $table->text('description');
+            // The process the task belongs to.
+            $table->unsignedBigInteger('process_id')->nullable();
 
+            // Is task comleted
             $table->boolean('is_done')->default(false);
+
+            // Default timestamps.
+            $table->timestamps();
+
+            // The rank that the task will be listed at.
+            $table->integer('rank');
+
+            // Has the task watchers that must be notified?
+            $table->boolean('has_watchers')->default(false);
+
+            // The id of the user the task is assigned to, if applicable.
+            $table->unsignedBigInteger('assignee_id')->nullable();
+
+            // Does the task have a due date?
+            $table->boolean('has_due_date')->default(false);
         });
     }
 

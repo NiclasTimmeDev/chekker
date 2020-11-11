@@ -49,3 +49,9 @@ Route::get('process/single/{process_id}', "ProcessController@single");
 Route::get('tag/{team_id}', 'TagController@index');
 // Create a new tag.
 Route::post('tag', 'TagController@store');
+
+//===============
+// TASK
+//===============
+// Create and edit tasks.
+Route::post("task", "TaskController@store");
