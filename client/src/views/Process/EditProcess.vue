@@ -73,7 +73,7 @@
                             <ManagementCard
                                 v-for="(task, index) in tasks"
                                 :key="index"
-                                @onClick="changeCurrentTask(task.id)"
+                                @onClick="changeCurrentTask(index)"
                             >
                                 <template #input>
                                     <input
