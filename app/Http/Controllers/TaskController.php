@@ -44,7 +44,6 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $pram = 1;
         try {
             // Extract values from request.
             $process_id = $request->process_id;

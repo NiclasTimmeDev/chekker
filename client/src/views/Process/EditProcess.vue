@@ -3,11 +3,12 @@
         <!-- MANAGEMENT SIDEBAR -->
         <management-sidebar
             ><template #content>
+                <!-- SUBMIT BUTTON -->
                 <button
-                    class="btn btn-primary mb-3"
+                    class="btn btn-primary mb-3 flex-button"
                     @click.prevent="submitTasks"
                 >
-                    Speichern
+                    Speichern <Spinner v-if="task.loading" />
                 </button>
                 <h4 class="mb-3">
                     <input
@@ -102,6 +103,12 @@
             <!-- CANVAS -->
             <Canvas>
                 <template #content>
+                    <div
+                        v-if="task.errors['submit']"
+                        class="alert alert-danger"
+                    >
+                        {{ task.errors["submit"] }}
+                    </div>
                     <!-- CTA IF THERE IS NO WIDGET YET -->
                     <p
                         class="text-center"
@@ -297,6 +304,7 @@ import ChecklistInputWidget from "./../../components/Widgets/Checklist/Checklist
 import ChecklistWrapperWidget from "./../../components/Widgets/Checklist/ChecklistWrapperWidget";
 import EmailWidget from "./../../components/Widgets/Email/EmailWidget";
 import TokenModal from "./../../components/Process/Email/TokenModal.vue";
+import Spinner from "./../../components/UI/Spinners/SmallSpinner";
 export default {
     // ============================
     // DATA
@@ -583,6 +591,7 @@ export default {
                 processID: processID,
                 tasks: submittable
             });
+            console.log(res.status);
             if (res) {
                 // BE HAPPY.
             }
@@ -607,7 +616,8 @@ export default {
         ChecklistWrapperWidget,
         ChecklistInputWidget,
         TokenModal,
-        EmailWidget
+        EmailWidget,
+        Spinner
     }
 };
 </script>

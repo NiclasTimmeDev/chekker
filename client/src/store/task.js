@@ -9,7 +9,7 @@ export default {
         return {
             loading: false,
             tasks: [],
-            storeTasksError: []
+            errors: []
         };
     },
     // ============================
@@ -21,7 +21,7 @@ export default {
          *
          * @param {object} state
          */
-        startTagLoading(state) {
+        startTaskSubmitLoading(state) {
             state.loading = true;
         },
         /**
@@ -29,11 +29,15 @@ export default {
          *
          * @param {object} state
          */
-        stopTagLoading(state) {
+        stopTaskSubmiLoading(state) {
             state.loading = false;
         },
+        storeTasks(state, tasks) {
+            state.loading = false;
+            state.tasks = tasks
+        },
         storeTasksError(state, msg) {
-            state.storeTasksError = msg;
+            state.errors = msg;
         }
     },
     // ============================
@@ -53,8 +57,9 @@ export default {
          *   tasks if successfull request, false if not.
          */
         async storeTasks({ commit }, data) {
-            const { processID, tasks } = data;
+            commit("startTaskSubmitLoading");
             try {
+                const { processID, tasks } = data;
                 // Check processID
                 if (!parseInt(processID)) {
                     commit("storeTasksError", "Fehler im Prozess.");
@@ -83,10 +88,11 @@ export default {
                     tasks: tasks
                 });
 
-                console.log(res);
+
 
                 // Store new tasks if req was sucessful.
-                if (res.status === 201) {
+                if (res.status === 200) {
+                    commit("stopTaskSubmiLoading");
                     commit("storeTasks", res.data);
                     return res.data;
                 }
