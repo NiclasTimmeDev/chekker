@@ -67,19 +67,21 @@
                         ghost-class="draggable--ghost"
                         :list="tasks"
                         group="tasks"
+                        @end="onEnd"
                     >
                         <transition-group>
                             <!-- ONE CARD FOR EVERY TASK -->
                             <ManagementCard
                                 v-for="(task, index) in tasks"
                                 :key="index"
-                                @onClick="changeCurrentTask(index)"
+                                @onClick="changeCurrentTask(task.id)"
                             >
                                 <template #input>
                                     <input
                                         class="input-full"
                                         type="text"
-                                        v-model="task.label"
+                                        v-model.lazy="task.title"
+                                        @change="updateSingleTaskHanlder(task)"
                                     />
                                 </template>
                             </ManagementCard>
@@ -88,18 +90,13 @@
                 </div>
 
                 <!-- ADD NEW TASK BUTTON -->
-                <button class="btn btn-link" @click="addTask">
+                <button class="btn btn-link" @click="createNewTaskHanlder">
                     Neuer Task
                 </button></template
             ></management-sidebar
         >
         <!-- LABEL OF CURRENT TASK -->
         <div class="with-sidebar-content">
-            <div class="row justify-content-center">
-                <div class="col-md-9 col-lg-8">
-                    <h1>{{ tasks[currentTask].label }}</h1>
-                </div>
-            </div>
             <!-- CANVAS -->
             <Canvas>
                 <template #content>
@@ -110,22 +107,15 @@
                         {{ task.errors["submit"] }}
                     </div>
                     <!-- CTA IF THERE IS NO WIDGET YET -->
-                    <p
-                        class="text-center"
-                        v-if="tasks[currentTask].steps.length === 0"
-                    >
+                    <p class="text-center" v-if="steps.length === 0">
                         Ziehen Sie ein Widget von der rechten Seite des
                         Bildschirms hier her.
                     </p>
                     <!-- WIDGETS -->
-                    <draggable
-                        class="drag-area"
-                        :list="tasks[currentTask].steps"
-                        group="widgets"
-                    >
+                    <draggable class="drag-area" :list="steps" group="widgets">
                         <div
                             class="form-group canvas--widget-wrapper py-3 px-2"
-                            v-for="(step, index) in tasks[currentTask].steps"
+                            v-for="(step, index) in currentSteps"
                             :key="index"
                         >
                             <!-- WIDGET ACTIONS -->
@@ -322,6 +312,7 @@ export default {
                     steps: []
                 }
             ],
+            steps: [],
             clonableWidgets: [
                 {
                     icon: "fas fa-text-width",
@@ -359,7 +350,15 @@ export default {
     // ============================
     computed: {
         ...mapState(["team", "auth", "tag", "process", "task"]),
-        ...mapGetters(["getMembers", "getTags"])
+        ...mapGetters(["getMembers", "getTags"]),
+        /**
+         * Reduce steps array to only the ones of the current task.
+         */
+        currentSteps() {
+            return this.steps.filter(step => {
+                return step.taskID == this.currentTask;
+            });
+        }
     },
     // ============================
     // WATCHERS
@@ -383,7 +382,10 @@ export default {
             "loadTeamMembers",
             "createProcess",
             "getAllTags",
-            "storeTasks"
+            "createTask",
+            "getAllProcessTasks",
+            "updateTask",
+            "updateRankings"
         ]),
         /**
          * Add a new task to the list.
@@ -391,12 +393,62 @@ export default {
          * so that the right data can be displayed
          * on the canvas.
          */
-        addTask() {
+        addTask(title, id) {
             this.tasks.push({
-                label: "",
-                id: this.tasks.length,
+                title: title,
+                id: id,
                 steps: []
             });
+        },
+        /**
+         * Send task to api.
+         *
+         * @param {object} task
+         *   The task that will be sent.
+         * @param {integer} rank
+         *   The rank of the task.
+         */
+        async createNewTaskHanlder() {
+            try {
+                // Get process id from url.
+                const processID = this.$route.params.id;
+
+                // Define a ranking for the new task.
+                const rank = this.tasks.length;
+                const newTask = await this.createTask({
+                    process_id: processID,
+                    rank: rank
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async updateSingleTaskHanlder(task) {
+            try {
+                const process_id = this.$route.params.id;
+                const res = this.updateTask({ process_id, task });
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        /**
+         * When the order of the tasks was changed, persist this to the DB.
+         *
+         * @param {object} evt
+         *   The event object.
+         */
+        async onEnd(evt) {
+            const processID = this.$route.params.id;
+
+            const res = await this.updateRankings({
+                process_id: processID,
+                tasks: this.tasks
+            });
+
+            // If res is array this means request was successful.
+            if (res.length !== 0) {
+                this.tasks = res;
+            }
         },
         /**
          * Change the task the user is currently working on.
@@ -408,10 +460,11 @@ export default {
             this.currentTask = id;
         },
         /**
-         * Clone a widget. This function is called
-         * when a widget from the ControlSidebar is dragged.
-         * It will return a new tasks object. This will be appended
-         * to the tasks array.
+         * Clone a widget from the sidebar into the main canvas.
+         *
+         * This function is called when a widget from the
+         * ControlSidebar is dragged. It will return a new tasks object.
+         * This will be appended to the tasks array.
          *
          * @param {object} id
          *   The id of the cloned widget.
@@ -451,7 +504,8 @@ export default {
             }
             // Create new object with same schema as the other tasks.
             return {
-                id: this.tasks[this.currentTask].steps.length,
+                id: this.steps.length,
+                taskID: this.currentTask,
                 label: widget.label,
                 widgetID: widget.id,
                 widgetType: widget.type,
@@ -538,21 +592,26 @@ export default {
          *   The index of the step that should be deleted from the current task.
          */
         deleteStep(index) {
-            const steps = this.tasks[this.currentTask].steps;
-            steps.splice(index, 1);
+            this.steps.splice(index, 1);
         },
+        /**
+         * Clone a step and all its values.
+         *
+         * @param {string} index
+         *   The index in the steps array of the step that will be cloned.
+         */
         cloneStep(index) {
             // Get all steps.
-            const steps = this.tasks[this.currentTask].steps;
+            const step = this.steps[index];
 
             // Get the ID of the corresponding clonable widget.
-            const widgetID = steps[index].widgetID;
+            const widgetID = step.widgetID;
 
             // Create a clone.
             let clone = this.clone({ id: widgetID });
 
             // Get the value of the old widget
-            const value = steps[index].value;
+            const value = step.value;
 
             // Check the type of the value and copy the value appropriately.
             if (value.isArray) {
@@ -562,7 +621,9 @@ export default {
             } else {
                 clone.value = value;
             }
-            steps.splice(index + 1, 0, clone);
+
+            // Insert new step right after the "original" one.
+            this.steps.splice(index + 1, 0, clone);
         },
         /**
          * Submit tasks to the API.
@@ -586,12 +647,12 @@ export default {
                 };
             });
 
-            // QUERY API AND HANDLE RESPONSE.
+            // QUERY API AND HANDLE RESPONSE.f
             const res = this.storeTasks({
                 processID: processID,
                 tasks: submittable
             });
-            console.log(res.status);
+            //console.log(res.status);
             if (res) {
                 // BE HAPPY.
             }
@@ -618,6 +679,13 @@ export default {
         TokenModal,
         EmailWidget,
         Spinner
+    },
+    // ============================
+    // COMPONENTS
+    // ============================
+    async beforeMount() {
+        const processID = this.$route.params.id;
+        this.tasks = await this.getAllProcessTasks(processID);
     }
 };
 </script>

@@ -29,6 +29,10 @@ class TeamController extends Controller
         // Get current user.
         $user = Auth::user();
 
+        if (!$user) {
+            return ExceptionHelper::customSingleError("Keine Teams gefunden.", 401);
+        }
+
         // Get the teams of the user.
         $teams = $user->teams;
 

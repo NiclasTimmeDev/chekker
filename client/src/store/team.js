@@ -155,6 +155,7 @@ export default {
                 commit("loadAllTeams", res.data);
                 return true;
             } catch (error) {
+                console.log(error);
                 if (error.response.status === 401) {
                     commit(
                         "storeTeamError",

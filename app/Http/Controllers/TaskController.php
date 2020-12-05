@@ -34,13 +34,40 @@ class TaskController extends Controller
         $this->textWidget = $text_widget;
     }
     /**
-     * Display a listing of the resource.
+     * Get all tasks of a process.
      *
+     * @param string process_id
+     *   The process the tasks belong to.
+     * 
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(string $process_id)
     {
-        //
+        try {
+            // Check for user.
+            $user = Auth::user();
+            if (!$user) {
+                return ExceptionHelper::customSingleError('Sie sind nicht eingeloggt.', 401);
+            }
+
+            // Check if process id is given.
+            if (!$process_id) {
+                return ExceptionHelper::customSingleError('Kein Prozess angegeben.', 400);
+            }
+
+            // Check if user has access to this process.
+            $user_has_permission = UserHelper::hasProcessPermission($user, $process_id);
+            if (!$user_has_permission) {
+                return ExceptionHelper::customSingleError('Sie haben keine Berechtigungen für diesen Prozess.', 401);
+            }
+
+            // Load all tasks that have this process id.
+            $tasks = Task::where('process_id', $process_id)->orderBy('rank', 'ASC')->get();
+
+            return $tasks;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
     }
 
     /**
@@ -64,15 +91,15 @@ class TaskController extends Controller
         try {
             // Extract values from request.
             $process_id = $request->process_id;
-            $tasks = $request->tasks;
+            $rank = $request->rank;
+
             // Return if no process id given.
             if (!$process_id) {
                 return ExceptionHelper::customSingleError('Kein Prozess angegeben.', 400);
             }
 
-            // Return if tasks are badly formatted or not present.
-            if (!is_array($tasks) || empty($tasks)) {
-                return ExceptionHelper::customSingleError('Keine Tasks angegeben.', 400);
+            if (!$rank) {
+                return ExceptionHelper::customSingleError('Kein Ranking angegeben.', 400);
             }
 
             // Get current user.
@@ -84,94 +111,19 @@ class TaskController extends Controller
                 ExceptionHelper::customSingleError('Sie haben keinen Zugriff auf diesen Prozess.', 401);
             }
 
-            // The tasks that will be returned to the user in the end.
-            $return_values = [];
+            // Create new task.
+            $new_task = new Task([
+                'title' => "",
+                'process_id' => $process_id,
+                'rank' => $rank,
+            ]);
+            $new_task->save();
 
-            // Iterate over every given task.
-            foreach ($tasks as $task) {
-                /**
-                 * Check if task already has an id,
-                 * which indicates that it alredy exists.
-                 * If so, load the task and edit it.
-                 */
-                if (array_key_exists('task_id', $task)) {
-                    $existing_task = Task::find($task['task_id']);
-
-                    /**
-                     * If the task couldn't be found,
-                     * create a new one anyways.
-                     */
-                    if (!$existing_task) {
-                        // Create new task and store it.
-                        $new_task = $this->createNewTaskObject($task, $process_id);
-                        // Throw error if smth. went wrong.
-                        if (!$new_task) {
-                            return ExceptionHelper::customSingleError('Sorry, beim speichern einer der Tasks ist etwas schief gelaufenn.', 500);
-                        }
-                        $return_values[] = $new_task;
-                        continue;
-                    }
-
-                    // Udate values and store to DB.
-                    $existing_task->title = $task['title'];
-                    $existing_task->rank = $task['rank'];
-                    $existing_task->save();
-                    $return_values[] = $existing_task;
-                    continue;
-                }
-
-                // Create a new task if there didn't exist one before.
-                $new_task = $this->createNewTaskObject($task, $process_id);
-                if (!$new_task) {
-                    return ExceptionHelper::customSingleError('Sorry, beim speichern einer der Tasks ist etwas schief gelaufenn.', 500);
-                }
-
-                $return_values[] = $new_task;
-
-                // Check if Widgets are attached to the task.
-                if (!array_key_exists('steps', $task)) {
-                    continue;
-                }
-                $steps = [];
-                foreach ($task['steps'] as $key => $value) {
-                    // Put the index of the step in the array as its rank.
-                    $value['rank'] = $key;
-                    $new_widget = $this->storeTask($new_task['id'], $value);
-                    if (!$new_widget) {
-                        continue;
-                    }
-                    $steps[]  = $new_widget;
-                }
-                // Iterate over steps and save them.
-            }
-
-            // Send all tasks back to the client.
-            return $return_values;
+            // Send newly created task to client.
+            return $new_task;
         } catch (Throwable $e) {
-            ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen', 500);
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen', 500);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
     }
 
     /**
@@ -181,9 +133,85 @@ class TaskController extends Controller
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request)
     {
-        //
+        try {
+            $process_id = $request->process_id;
+            $updated_task = $request->task;
+
+            // Check if user has permission to the process.
+            $user = Auth::user();
+            $has_permission = UserHelper::hasProcessPermission($user, $process_id);
+            if (!$has_permission) {
+                return ExceptionHelper::customSingleError('Sie haben keinen Zugriff auf diesen Prozess.', 401);
+            }
+
+            // Load task.
+            $task = Task::find($updated_task['id']);
+            if (!$task) {
+                return ExceptionHelper::customSingleError('Der Task wurde nicht gefunden.', 404);
+            }
+
+            // Iterate over every field of task from req and update the values.
+            foreach ($updated_task as $key => $value) {
+                // Skip if it's a field that should not be changed by the user.
+                if ($key === 'created_at' || $key === 'id' || $key === 'id' || $key === 'updated_at') {
+                    continue;
+                }
+                // Update value of task.
+                $task->$key = $value;
+            }
+            $task->save();
+            return $task;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen', 500);
+        }
+    }
+    /**
+     * Update the rankings of all tasks of a process.
+     */
+    public function updateRankings(Request $request)
+    {
+        try {
+            $process_id = $request->process_id;
+            $tasks = $request->tasks;
+
+            // Check if user has permission to the process.
+            $user = Auth::user();
+            $has_permission = UserHelper::hasProcessPermission($user, $process_id);
+            if (!$has_permission) {
+                return ExceptionHelper::customSingleError('Sie haben keinen Zugriff auf diesen Prozess.', 401);
+            }
+
+            // Find the 'old' task from DB for every task sent by client.
+            $error = FALSE;
+            $updated_tasks = [];
+            foreach ($tasks as $task) {
+                $old_task = Task::find($task['id']);
+                // Error if task wasn't found.
+                if (!$old_task) {
+                    $error = TRUE;
+                    break;
+                }
+                // Update the value. Don't save yet, because there might occur an error with another task.
+                $old_task->rank = $task['rank'];
+                $updated_tasks[] = $old_task;
+            }
+            // Error if something went wrong.
+            if ($error) {
+                return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+            }
+
+            // Store updated tasks.
+            foreach ($updated_tasks as $updated_task) {
+                $updated_task->save();
+            }
+
+            // Send updated tasks to client.
+            return $updated_tasks;
+        } catch (Throwable $e) {
+            return ExceptionHelper::customSingleError('Sorry, etwas ist schief gelaufen.', 500);
+        }
     }
 
     /**

@@ -53,5 +53,11 @@ Route::post('tag', 'TagController@store');
 //===============
 // TASK
 //===============
+// Get all tasks of a process.
+Route::get('task/{process_id}', "TaskController@index");
 // Create and edit tasks.
 Route::post("task", "TaskController@store");
+// Update a task.
+Route::put("task", "TaskController@update");
+// Update ranking of all tasks.
+Route::put("task/rank", "TaskController@updateRankings");
