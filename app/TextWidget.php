@@ -9,8 +9,10 @@ class TextWidget extends Model
     // Fillable fields.
     protected $fillable = [
         'task_id',
-        'content',
+        'value',
         'rank',
+        'process_id',
+        'widget_type'
     ];
 
     // One to many relation with task.

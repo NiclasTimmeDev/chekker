@@ -10,7 +10,10 @@ export default {
             loading: false,
             loadingAllTasks: false,
             tasks: [],
-            errors: []
+            errors: [],
+            steps: [],
+            loadingSteps: false,
+            loadingStepsError: ""
         };
     },
     // ============================
@@ -65,6 +68,19 @@ export default {
                     return task;
                 }
             });
+        },
+        startLoadingSteps(state) {
+            state.loadingSteps = true;
+        },
+        loadingStepsError(state, msg) {
+            state.loadingSteps = false;
+            state.steps = [];
+            state.loadingStepsError = msg;
+        },
+        loadingStepsSuccess(state, steps) {
+            state.loadingSteps = false;
+            state.steps = steps;
+            state.loadingStepsError = "";
         }
     },
     // ============================
@@ -86,6 +102,7 @@ export default {
         async createTask({ commit }, data) {
             try {
                 const { process_id, rank } = data;
+
                 // Error if process id is messed up.
                 if (!process_id) {
                     return commit(
@@ -130,6 +147,34 @@ export default {
             } catch (error) {
                 commit("stopLoadingAllTasks");
                 commit("storeTasksError", error.response.data.error);
+            }
+        },
+        /**
+         * Get all steps that belong to a process.
+         *
+         * @param {object} commit
+         *   The commit object.
+         * @param {string} processID
+         *   The process the steps belong to.
+         */
+        async getAllProcessSteps({ commit }, processID) {
+            try {
+                // Start loading.
+                commit("startLoadingSteps");
+
+                // Send data to api.
+                const res = await axios.get(`/api/widget/${processID}`);
+
+                // Success.
+                if (res.status === 200) {
+                    commit("loadingStepsSuccess", res.data);
+                    return res.data;
+                }
+            } catch (error) {
+                commit(
+                    "loadingStepsError",
+                    "Sorry, etwas ist schief gelaufen."
+                );
             }
         },
         /**

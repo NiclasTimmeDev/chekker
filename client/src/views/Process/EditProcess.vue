@@ -6,7 +6,7 @@
                 <!-- SUBMIT BUTTON -->
                 <button
                     class="btn btn-primary mb-3 flex-button"
-                    @click.prevent="submitTasks"
+                    @click.prevent="saveSteps"
                 >
                     Speichern <Spinner v-if="task.loading" />
                 </button>
@@ -139,7 +139,7 @@
                                 <!-- TEXT WIDGET -->
                                 <div
                                     class="editor inline-editor"
-                                    v-if="step.widgetType === 'text'"
+                                    v-if="step.widget_type === 'text'"
                                 >
                                     <ckeditor
                                         v-model="step.value"
@@ -151,7 +151,7 @@
                                 <!-- IMAGE WIDGET -->
                                 <div
                                     class="custom-file"
-                                    v-if="step.widgetType === 'image'"
+                                    v-if="step.widget_type === 'image'"
                                 >
                                     <input
                                         type="file"
@@ -176,7 +176,7 @@
 
                                 <!-- CHECKLIST WIDGET -->
                                 <ChecklistWrapperWidget
-                                    v-if="step.widgetType === 'checklist'"
+                                    v-if="step.widget_type === 'checklist'"
                                     @click="addChecklistItem(index)"
                                 >
                                     <template #content>
@@ -194,7 +194,7 @@
 
                                 <!-- EMAIL WIDGET -->
                                 <EmailWidget
-                                    v-if="step.widgetType === 'email'"
+                                    v-if="step.widget_type === 'email'"
                                     v-model="step.value"
                                     @clickTokenButton="addToken(index)"
                                     :tokens="step.value.tokens"
@@ -259,6 +259,7 @@
                         :clone="clone"
                         :group="{ name: 'widgets', pull: 'clone', put: false }"
                         :sort="false"
+                        @end="handleCloneEvent"
                     >
                         <transition-group>
                             <!-- ONE CARD FOR EVERY TASK -->
@@ -302,6 +303,7 @@ export default {
     data() {
         return {
             processName: "Name einfügen...",
+            currentProcess: this.$route.params.id,
             currentTask: 0,
             isTokenModalActive: false,
             error: "",
@@ -317,25 +319,25 @@ export default {
                 {
                     icon: "fas fa-text-width",
                     label: "Text",
-                    type: "text",
+                    widget_type: "text",
                     id: 0
                 },
                 {
                     icon: "fas fa-list",
                     label: "Checkliste",
                     id: 1,
-                    type: "checklist"
+                    widget_type: "checklist"
                 },
                 {
                     icon: "fas fa-image",
                     label: "Bild",
-                    type: "image",
+                    widget_type: "image",
                     id: 2
                 },
                 {
                     icon: "fas fa-paper-plane",
                     label: "E-Mail",
-                    type: "email",
+                    widget_type: "email",
                     id: 3
                 }
             ],
@@ -355,9 +357,12 @@ export default {
          * Reduce steps array to only the ones of the current task.
          */
         currentSteps() {
-            return this.steps.filter(step => {
-                return step.taskID == this.currentTask;
+            // console.log(this.steps);
+            const array = this.steps.filter(step => {
+                return parseInt(step.task_id) === parseInt(this.currentTask);
             });
+
+            return array;
         }
     },
     // ============================
@@ -385,7 +390,10 @@ export default {
             "createTask",
             "getAllProcessTasks",
             "updateTask",
-            "updateRankings"
+            "updateRankings",
+            "createTextWidget",
+            "getAllProcessSteps",
+            "updateTextWidget"
         ]),
         /**
          * Add a new task to the list.
@@ -414,7 +422,7 @@ export default {
                 const processID = this.$route.params.id;
 
                 // Define a ranking for the new task.
-                const rank = this.tasks.length;
+                const rank = this.tasks.length || 0;
                 const newTask = await this.createTask({
                     process_id: processID,
                     rank: rank
@@ -430,6 +438,40 @@ export default {
             } catch (error) {
                 console.log(error);
             }
+        },
+        /**
+         * Handle event when new widget is cloned into the canvas.
+         *
+         * This means storing the new widget in the DB and update
+         * the ranking of existing widgets.
+         *
+         * @param {object} event
+         *   The event object.
+         */
+        async handleCloneEvent(evt) {
+            this.steps.forEach(async (step, index) => {
+                const process_id = this.currentProcess;
+                const task_id = this.currentTask;
+                const widget = {
+                    value: step.value,
+                    rank: index
+                };
+
+                // If it has no id its a newly created one.
+                if (!step.id) {
+                    switch (step.widget_type) {
+                        case "text":
+                            const res = await this.createTextWidget({
+                                process_id,
+                                task_id,
+                                widget
+                            });
+                            if (res) {
+                                this.steps[index] = res;
+                            }
+                    }
+                }
+            });
         },
         /**
          * When the order of the tasks was changed, persist this to the DB.
@@ -480,7 +522,7 @@ export default {
 
             // Create default value depending on widget type
             let value = "";
-            switch (widget.type) {
+            switch (widget.widget_type) {
                 case "text":
                     value = "<p>Schreiben Sie etwas...</p>";
                     break;
@@ -502,15 +544,26 @@ export default {
                 default:
                     "";
             }
+
             // Create new object with same schema as the other tasks.
             return {
-                id: this.steps.length,
-                taskID: this.currentTask,
+                task_id: this.currentTask,
                 label: widget.label,
                 widgetID: widget.id,
-                widgetType: widget.type,
+                widget_type: widget.widget_type,
                 value: value
             };
+        },
+        async storeNewWidget(data) {
+            const { task_id, widget_id, widget_type, value } = data;
+            const process_id = this.$oute.params.id;
+            if (!process_id) {
+                return;
+            }
+            switch (widget_type) {
+                case "text":
+                    this.createTextWidget({ process_id, task_id });
+            }
         },
         /**
          * Append image form data.
@@ -550,7 +603,7 @@ export default {
              * Check if its actually an email widget
              * and if tokens array exists.
              */
-            if (task.widgetType !== "email" || !task.value.tokens) {
+            if (task.widget_type !== "email" || !task.value.tokens) {
                 this.isTokenModalActive = !this.isTokenModalActive;
                 return;
             }
@@ -626,36 +679,35 @@ export default {
             this.steps.splice(index + 1, 0, clone);
         },
         /**
-         * Submit tasks to the API.
+         * Save steps.
          */
-        async submitTasks() {
-            // Check if there are tasks
-            if (!this.tasks || this.tasks.length === 0) {
-                this.error = "Keine tasks vorhanden";
-                return;
-            }
+        async saveSteps() {
+            this.steps.forEach(async (step, index) => {
+                // Give the step a new rank.
+                const new_rank = index;
 
-            // Get process id from url
-            const processID = this.$route.params.id;
+                // Get the id of the widget.
 
-            // Reformat tasks array.
-            const submittable = this.tasks.map((task, index) => {
-                return {
-                    title: task.label,
-                    rank: index,
-                    steps: task.steps
-                };
+                const widget_id = step.id;
+                // Check if the step has the necessary values.
+                if (
+                    step.id === undefined ||
+                    step.task_id === undefined ||
+                    !step.widget_type
+                ) {
+                    return;
+                }
+
+                switch (step.widget_type) {
+                    case "text":
+                        await this.updateTextWidget({
+                            process_id: this.currentProcess,
+                            widget_id: widget_id,
+                            new_value: step.value,
+                            new_rank: new_rank
+                        });
+                }
             });
-
-            // QUERY API AND HANDLE RESPONSE.f
-            const res = this.storeTasks({
-                processID: processID,
-                tasks: submittable
-            });
-            //console.log(res.status);
-            if (res) {
-                // BE HAPPY.
-            }
         }
     },
     // ============================
@@ -686,6 +738,7 @@ export default {
     async beforeMount() {
         const processID = this.$route.params.id;
         this.tasks = await this.getAllProcessTasks(processID);
+        this.steps = await this.getAllProcessSteps(processID);
     }
 };
 </script>

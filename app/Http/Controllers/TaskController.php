@@ -98,7 +98,7 @@ class TaskController extends Controller
                 return ExceptionHelper::customSingleError('Kein Prozess angegeben.', 400);
             }
 
-            if (!$rank) {
+            if (!$rank && $rank !== 0) {
                 return ExceptionHelper::customSingleError('Kein Ranking angegeben.', 400);
             }
 

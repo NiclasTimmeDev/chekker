@@ -61,3 +61,17 @@ Route::post("task", "TaskController@store");
 Route::put("task", "TaskController@update");
 // Update ranking of all tasks.
 Route::put("task/rank", "TaskController@updateRankings");
+
+//===============
+// Text Widget
+//===============
+// Get all widgets of a process.
+Route::get("widget/{process_id}", "WidgetController@index");
+
+
+//===============
+// Text Widget
+//===============
+// Create a new text widget.
+Route::post("textwidget", "TextWidgetController@store");
+Route::put("textwidget", "TextWidgetController@update");

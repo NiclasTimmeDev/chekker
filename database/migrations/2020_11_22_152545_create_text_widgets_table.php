@@ -15,9 +15,11 @@ class CreateTextWidgetsTable extends Migration
     {
         Schema::create('text_widgets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('task_id')->nullable();
-            $table->longText('content')->nullable();
+            $table->unsignedBigInteger('task_id');
+            $table->unsignedBigInteger('process_id');
+            $table->longText('value')->nullable();
             $table->integer('rank')->nullable();
+            $table->string('widget_type')->default('text');
             $table->timestamps();
         });
     }
