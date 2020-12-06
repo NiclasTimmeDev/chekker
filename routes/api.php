@@ -63,7 +63,7 @@ Route::put("task", "TaskController@update");
 Route::put("task/rank", "TaskController@updateRankings");
 
 //===============
-// Text Widget
+// Widgets
 //===============
 // Get all widgets of a process.
 Route::get("widget/{process_id}", "WidgetController@index");

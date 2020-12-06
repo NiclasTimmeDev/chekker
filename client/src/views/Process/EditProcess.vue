@@ -112,7 +112,11 @@
                         Bildschirms hier her.
                     </p>
                     <!-- WIDGETS -->
-                    <draggable class="drag-area" :list="steps" group="widgets">
+                    <draggable
+                        class="drag-area"
+                        :list="currentSteps"
+                        group="widgets"
+                    >
                         <div
                             class="form-group canvas--widget-wrapper py-3 px-2"
                             v-for="(step, index) in currentSteps"
@@ -357,12 +361,18 @@ export default {
          * Reduce steps array to only the ones of the current task.
          */
         currentSteps() {
-            // console.log(this.steps);
-            const array = this.steps.filter(step => {
-                return parseInt(step.task_id) === parseInt(this.currentTask);
+            // If none selected, set the first task as the current one.
+            if (!this.currentTask) {
+                this.currentTask = this.tasks[0].id;
+            }
+
+            // Find the current task in the tasks array.
+            const currentTask = this.tasks.filter(task => {
+                return parseInt(this.currentTask) === parseInt(task.id);
             });
 
-            return array;
+            // Return the steps of the task.
+            return currentTask[0].steps;
         }
     },
     // ============================
@@ -486,11 +496,10 @@ export default {
                 process_id: processID,
                 tasks: this.tasks
             });
-
-            // If res is array this means request was successful.
-            if (res.length !== 0) {
-                this.tasks = res;
-            }
+            /**
+             * TODO: Find a good way to take result and
+             * map it into the existing tasks array without loosing the steps.
+             *  */
         },
         /**
          * Change the task the user is currently working on.
@@ -682,31 +691,49 @@ export default {
          * Save steps.
          */
         async saveSteps() {
-            this.steps.forEach(async (step, index) => {
-                // Give the step a new rank.
-                const new_rank = index;
+            this.tasks.forEach((task, i) => {
+                task.steps.forEach(async (step, index) => {
+                    // Give the step a new rank.
+                    const new_rank = index;
 
-                // Get the id of the widget.
+                    // Get the id of the widget.
 
-                const widget_id = step.id;
-                // Check if the step has the necessary values.
-                if (
-                    step.id === undefined ||
-                    step.task_id === undefined ||
-                    !step.widget_type
-                ) {
-                    return;
-                }
+                    const widget_id = step.id;
+                    // Check if the step has the necessary values.
+                    if (
+                        step.id === undefined ||
+                        step.task_id === undefined ||
+                        !step.widget_type
+                    ) {
+                        return;
+                    }
 
-                switch (step.widget_type) {
-                    case "text":
-                        await this.updateTextWidget({
-                            process_id: this.currentProcess,
-                            widget_id: widget_id,
-                            new_value: step.value,
-                            new_rank: new_rank
-                        });
-                }
+                    switch (step.widget_type) {
+                        case "text":
+                            await this.updateTextWidget({
+                                process_id: this.currentProcess,
+                                widget_id: widget_id,
+                                new_value: step.value,
+                                new_rank: new_rank
+                            });
+                    }
+                });
+            });
+        },
+        async fetchAndMapTasksAnsSteps() {
+            // Fetch all steps that belong to this process.
+            const processID = this.$route.params.id;
+            const tasks = await this.getAllProcessTasks(processID);
+            const steps = await this.getAllProcessSteps(processID);
+            // Map the steps to each task.
+            this.tasks = tasks.map((task, index) => {
+                const stepsOfTask = steps.filter(step => {
+                    return parseInt(step.task_id) === parseInt(task.id);
+                });
+                return {
+                    ...task,
+                    steps: stepsOfTask
+                };
             });
         }
     },
@@ -736,9 +763,7 @@ export default {
     // COMPONENTS
     // ============================
     async beforeMount() {
-        const processID = this.$route.params.id;
-        this.tasks = await this.getAllProcessTasks(processID);
-        this.steps = await this.getAllProcessSteps(processID);
+        await this.fetchAndMapTasksAnsSteps();
     }
 };
 </script>
